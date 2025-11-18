@@ -1,24 +1,127 @@
-# Unity 3D Platformer
+Super Platformer 3D
 
-A platformer game inspired by Super Mario 64 ca. 1980s and other 3D platformer games.
+A 3D platformer game built with Unity.
 
-## Dependencies
+📋 Table of Contents
 
-To use this repository, you'll need to have the following dependencies installed:
+1. Features
 
-- [DOTween (Free Version)](https://assetstore.unity.com/packages/tools/animation/dotween-hotween-v2-27676)
-- NEW Unity Input System
-- Cinemachine
-- TextMesh Pro
+2. Getting Started
 
-## Installation
+3. Gameplay Mechanics
 
-To get started with the 3D Platformer game development tutorial series, create your own URP project in Unity and follow along with the video. This repository will serve as a reference for anyone who gets stuck, or if any mistakes are found in the video recording. Once you have created your project, be sure to install the dependencies listed above.
+4. Controls
 
-## Contributing
+🎮 Features
 
-If you find a bug or would like to contribute to the development of this repository, please feel free to submit a pull request. We're always looking for ways to improve the tutorial series and make it more accessible to developers of all skill levels.
+- Smooth 3D Movement - Precise character control with momentum-based physics
 
-[**Watch the tutorial video here**](https://youtu.be/--_CH5DYz0M)
+- Classic Platforming - Jump, run, and explore 3D environments
 
-You can also check out my [YouTube channel](https://www.youtube.com/@git-amend?sub_confirmation=1) for more Unity content.
+- Camera System - Smart camera following using Cinemachine
+
+- Modern Input - Built with Unity's New Input System for cross-platform support
+
+- Visual Polish - Professional visuals with URP and smooth animations using DOTween
+
+- Immersive 3D Worlds - Explore unique visual styles and environmental mechanics
+
+- Dynamic Movement System - Master double jumps, air dashes, and wind glides to navigate tricky gaps and reach hidden areas
+
+- Interactive Obstacles & Tools - Bounce on floating pads, ride moving platforms, activate pressure plates
+
+- Collectibles & Progression - Gather items, collect resources, and find secret stars by exploring levels
+
+- Smooth Camera Controls - Enjoy adjustable camera angles with a retro-inspired third-person view, optimized for both keyboard/mouse and gamepad inputs
+
+- Original Soundtrack - Immersive music tailored to each biome, with dynamic shifts that react to gameplay moments
+
+🚀 Getting Started
+
+Prerequisites
+
+- Unity 2022.3 LTS or later
+
+- Git LFS (for handling large files)
+
+Installation
+
+This project is built with Unity 2022.3 LTS. To set up the development environment, follow these steps:
+
+1. Clone this repository:
+        git clone https://github.com/QizhouD/Super-Platformer-3D
+
+2. Open Unity Hub and add the cloned folder as a project.
+
+3. Install the required dependencies via the Package Manager:
+        Cinemachine
+
+4. New Unity Input System
+
+5. Text Mesh Pro
+
+6. DOTween (free version)
+
+7. Load the Assets/Scenes/TitleScreen scene to start editing.
+
+🎯 Gameplay Mechanics
+
+- Movement Abilities: Utilize double jumps for extra height, air dashes for horizontal distance, and wind glides to traverse large gaps.
+
+- Environmental Interactions: Interact with floating bounce pads, moving platforms, and pressure plates to solve puzzles and progress.
+
+- Collectibles: Search levels for secret stars and other collectibles to unlock additional content and track progression.
+
+- Camera Adjustment: Fine-tune camera angles to suit your playstyle, with a default retro third-person perspective.
+
+📱 Controls
+
+Optimized for both keyboard/mouse and gamepad. Default controls are as follows:
+
+Action
+
+Keyboard & Mouse
+
+Gamepad (Xbox/PlayStation)
+
+Move
+
+WASD
+
+Left Analog Stick
+
+Jump
+
+Spacebar
+
+A (Xbox) / X (PlayStation)
+
+Double Jump
+
+Press Spacebar twice
+
+Press A/X twice
+
+Air Dash
+
+Left Shift
+
+B (Xbox) / Circle (PlayStation)
+
+Wind Glide
+
+Hold Spacebar mid-air
+
+Hold A/X mid-air
+
+Camera Rotate
+
+Mouse
+
+Right Analog Stick
+
+Pause Menu
+
+Escape
+
+Start Button
