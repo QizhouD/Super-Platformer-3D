@@ -1,0 +1,340 @@
+fileFormatVersion: 2
+guid: 39907e39f3ea2c54dad2ca06d34c2afc
+ModelImporter:
+  serializedVersion: 22200
+  internalIDToNameTable:
+  - first:
+      1: 100000
+    second: Ankle_L
+  - first:
+      1: 100002
+    second: Ankle_R
+  - first:
+      1: 100004
+    second: Body
+  - first:
+      1: 100006
+    second: //RootNode
+  - first:
+      1: 100008
+    second: Diver_Mesh
+  - first:
+      1: 100010
+    second: Eye
+  - first:
+      1: 100012
+    second: GrasperFinger_L
+  - first:
+      1: 100014
+    second: GrasperFinger_R
+  - first:
+      1: 100016
+    second: GrasperThumb_L
+  - first:
+      1: 100018
+    second: GrasperThumb_R
+  - first:
+      1: 100020
+    second: Hip_L
+  - first:
+      1: 100022
+    second: Hip_R
+  - first:
+      1: 100024
+    second: Light01
+  - first:
+      1: 100026
+    second: Light02
+  - first:
+      1: 100028
+    second: Root
+  - first:
+      1: 100030
+    second: Shoulder_L
+  - first:
+      1: 100032
+    second: Shoulder_R
+  - first:
+      1: 100034
+    second: Wrist_L
+  - first:
+      1: 100036
+    second: Wrist_R
+  - first:
+      4: 400000
+    second: Ankle_L
+  - first:
+      4: 400002
+    second: Ankle_R
+  - first:
+      4: 400004
+    second: Body
+  - first:
+      4: 400006
+    second: //RootNode
+  - first:
+      4: 400008
+    second: Diver_Mesh
+  - first:
+      4: 400010
+    second: Eye
+  - first:
+      4: 400012
+    second: GrasperFinger_L
+  - first:
+      4: 400014
+    second: GrasperFinger_R
+  - first:
+      4: 400016
+    second: GrasperThumb_L
+  - first:
+      4: 400018
+    second: GrasperThumb_R
+  - first:
+      4: 400020
+    second: Hip_L
+  - first:
+      4: 400022
+    second: Hip_R
+  - first:
+      4: 400024
+    second: Light01
+  - first:
+      4: 400026
+    second: Light02
+  - first:
+      4: 400028
+    second: Root
+  - first:
+      4: 400030
+    second: Shoulder_L
+  - first:
+      4: 400032
+    second: Shoulder_R
+  - first:
+      4: 400034
+    second: Wrist_L
+  - first:
+      4: 400036
+    second: Wrist_R
+  - first:
+      21: 2100000
+    second: diver_test_mat
+  - first:
+      21: 2100002
+    second: falloff_mat
+  - first:
+      21: 2100004
+    second: diver_eye_test
+  - first:
+      43: 4300000
+    second: Diver_Mesh
+  - first:
+      74: 7400000
+    second: Take 001
+  - first:
+      95: 9500000
+    second: //RootNode
+  - first:
+      137: 13700000
+    second: Diver_Mesh
+  externalObjects: {}
+  materials:
+    materialImportMode: 0
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    removeConstantScaleCurves: 0
+    motionNodeName: 
+    rigImportErrors: "Invalid Avatar Rig Configuration. Missing or invalid transform:\n\tRequired
+      human bone 'LeftFoot' not found\n"
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 3
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importPhysicalCameras: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    nodeNameCollisionStrategy: 0
+    fileIdsGeneration: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 1
+    bakeAxisConversion: 0
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    optimizeBones: 1
+    meshOptimizationFlags: -1
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 0
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    strictVertexDataChecks: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 1
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
+  importAnimation: 0
+  humanDescription:
+    serializedVersion: 3
+    human: []
+    skeleton:
+    - name: Diver(Clone)
+      parentName: 
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Diver_Mesh
+      parentName: Diver(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 0.01, y: 0.01, z: 0.01}
+    - name: Root
+      parentName: Diver(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 0.01, y: 0.01, z: 0.01}
+    - name: Body
+      parentName: Root
+      position: {x: -0, y: 27.409914, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Light01
+      parentName: Body
+      position: {x: -0, y: 46.76537, z: -15.513301}
+      rotation: {x: -0.48446965, y: -0, z: -0, w: 0.8748081}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Light02
+      parentName: Light01
+      position: {x: -0, y: 1.0879526, z: 14.195378}
+      rotation: {x: 0.96305656, y: -0, z: -0, w: 0.26929906}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Eye
+      parentName: Body
+      position: {x: -0, y: 31.72745, z: 8.285169}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Shoulder_L
+      parentName: Body
+      position: {x: -25.807371, y: 7.721595, z: -0.40681398}
+      rotation: {x: -0.6942933, y: 0.13400319, z: 0.13400319, w: 0.6942933}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Wrist_L
+      parentName: Shoulder_L
+      position: {x: -11.026716, y: 0.62101597, z: 0}
+      rotation: {x: -0, y: -0, z: 0.1163581, w: 0.99320734}
+      scale: {x: 1, y: 1, z: 1}
+    - name: GrasperThumb_L
+      parentName: Wrist_L
+      position: {x: -5.014666, y: -4.6863766, z: 0}
+      rotation: {x: 0.6811628, y: -0.18978225, z: -0.18978225, w: 0.6811628}
+      scale: {x: 1, y: 1, z: 1}
+    - name: GrasperFinger_L
+      parentName: Wrist_L
+      position: {x: -5.568068, y: 4.562537, z: 0}
+      rotation: {x: -0.20613922, y: -0.6763924, z: 0.6763924, w: 0.20613922}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Shoulder_R
+      parentName: Body
+      position: {x: 25.8074, y: 7.7215858, z: -0.406814}
+      rotation: {x: 0.6942933, y: -0.13400294, z: 0.13400294, w: 0.6942933}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Wrist_R
+      parentName: Shoulder_R
+      position: {x: 11.026693, y: -0.62100065, z: 0}
+      rotation: {x: -0, y: -0, z: 0.11635864, w: 0.99320734}
+      scale: {x: 1, y: 1, z: 1}
+    - name: GrasperThumb_R
+      parentName: Wrist_R
+      position: {x: 5.014643, y: 4.6863904, z: -7.1054274e-15}
+      rotation: {x: 0.6811628, y: -0.18978225, z: -0.18978225, w: 0.6811628}
+      scale: {x: 1, y: 1, z: 1}
+    - name: GrasperFinger_R
+      parentName: Wrist_R
+      position: {x: 5.5680475, y: -4.562523, z: 0}
+      rotation: {x: -0.20613922, y: -0.6763924, z: 0.6763924, w: 0.20613922}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Hip_L
+      parentName: Body
+      position: {x: -8.512338, y: -3.8944194, z: 1.1665758}
+      rotation: {x: 0.7071068, y: -0.0000000025383673, z: 0.0000000025383673, w: 0.7071068}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Ankle_L
+      parentName: Hip_L
+      position: {x: -0, y: -3.7747583e-15, z: 16.681705}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071068}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Hip_R
+      parentName: Body
+      position: {x: 8.51234, y: -3.8944142, z: 1.16658}
+      rotation: {x: -0.7071068, y: -0.0000000025383673, z: -0.0000000025383673, w: 0.7071068}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Ankle_R
+      parentName: Hip_R
+      position: {x: -0, y: 7.327472e-15, z: -16.68171}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071068}
+      scale: {x: 1, y: 1, z: 1}
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 1
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 1
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 2
+  humanoidOversampling: 1
+  avatarSetup: 1
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 0
+  importBlendShapeDeformPercent: 0
+  remapMaterialsIfMaterialImportModeIsNone: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
