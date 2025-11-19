@@ -68,7 +68,7 @@ public class GeneratePlatforms : MonoBehaviour
                 Debug.Log("initialise");
                 InitialiseGrid();
                 //bakeNavMesh();
-                player.GetComponent<PlayerController>().originalPos = player.GetComponent<CharacterController>().transform.position;
+                player.GetComponent<PlayerControllerFPV>().originalPos = player.GetComponent<CharacterController>().transform.position;
             }
         }
     }

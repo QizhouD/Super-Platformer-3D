@@ -12,7 +12,7 @@ public class DoubleJump : MonoBehaviour
     {
         if (other.tag == "Player")
         {
-            other.GetComponent<PlayerController>().doubleJump = true;
+            other.GetComponent<PlayerControllerFPV>().doubleJump = true;
             Destroy(gameObject); // destroying the pickup
         }
     }
