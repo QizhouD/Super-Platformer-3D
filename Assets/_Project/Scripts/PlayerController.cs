@@ -24,7 +24,7 @@ namespace Platformer {
         [SerializeField] float jumpCooldown = 0f;
         [SerializeField] float gravityMultiplier = 3f;
         //double jump
-        [SerializeField] bool allowDoubleJump = true;
+        [SerializeField] bool allowDoubleJump = false;
         bool hasDoubleJump;
 
         
@@ -255,6 +255,12 @@ namespace Platformer {
 
         void SmoothSpeed(float value) {
             currentSpeed = Mathf.SmoothDamp(currentSpeed, value, ref velocity, smoothTime);
+        }
+        
+        public void EnableDoubleJump()
+        {
+            allowDoubleJump = true;
+            Debug.Log("doubleJump unlock！");
         }
     }
 }

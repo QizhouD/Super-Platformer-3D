@@ -793,6 +793,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 057bd40913e4d7142884e779907a5ad9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rotationSpeed: 50
+  bobSpeed: 2
+  bobHeight: 0.5
 --- !u!43 &104670133
 Mesh:
   m_ObjectHideFlags: 0
@@ -3023,6 +3026,11 @@ PrefabInstance:
       propertyPath: freeLookVCam
       value: 
       objectReference: {fileID: 1199833599}
+    - target: {fileID: 688335877600326463, guid: 4f9e969dc1b51fb408ba1d96945d0705,
+        type: 3}
+      propertyPath: allowDoubleJump
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 997392103978020290, guid: 4f9e969dc1b51fb408ba1d96945d0705,
         type: 3}
       propertyPath: m_BindingMode
