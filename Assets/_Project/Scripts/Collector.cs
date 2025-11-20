@@ -18,7 +18,7 @@ public class Collector : MonoBehaviour
 
     private void OnGUI()
     {
-        GUI.Label(new Rect(10, 10, 300, 20), "Waste Collected: " + points);
+        GUI.Label(new Rect(10, 10, 300, 20), "Target Collected: " + points);
     }
 
     void Update()
