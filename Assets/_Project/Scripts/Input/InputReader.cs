@@ -13,6 +13,7 @@ namespace Platformer {
         public event UnityAction<bool> Jump = delegate { };
         public event UnityAction<bool> Dash = delegate { };
         public event UnityAction Attack = delegate { };
+        public event UnityAction Pause = delegate { };
 
         PlayerInputActions inputActions;
         
@@ -75,6 +76,11 @@ namespace Platformer {
                 case InputActionPhase.Canceled:
                     Jump.Invoke(false);
                     break;
+            }
+        }
+        public void OnPause(InputAction.CallbackContext context) {
+            if (context.phase == InputActionPhase.Started) {
+                Pause.Invoke();
             }
         }
     }
