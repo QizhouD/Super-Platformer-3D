@@ -1938,9 +1938,19 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 688335877600326463, guid: 4f9e969dc1b51fb408ba1d96945d0705,
         type: 3}
+      propertyPath: allowDash
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 688335877600326463, guid: 4f9e969dc1b51fb408ba1d96945d0705,
+        type: 3}
       propertyPath: freeLookVCam
       value: 
       objectReference: {fileID: 325448137}
+    - target: {fileID: 688335877600326463, guid: 4f9e969dc1b51fb408ba1d96945d0705,
+        type: 3}
+      propertyPath: allowDoubleJump
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 997392103978020290, guid: 4f9e969dc1b51fb408ba1d96945d0705,
         type: 3}
       propertyPath: m_BindingMode

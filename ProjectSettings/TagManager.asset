@@ -13,6 +13,15 @@ TagManager:
   - Waste
   - TimeedPlatform
   - stealthPlayer
+  - Time
+  - Speed
+  - HUD
+  - Status
+  - EventSystem
+  - Results
+  - Button
+  - Pause
+  - Dash
   layers:
   - Default
   - TransparentFX

@@ -32,6 +32,7 @@ namespace Platformer {
         [SerializeField] float dashForce = 10f;
         [SerializeField] float dashDuration = 1f;
         [SerializeField] float dashCooldown = 2f;
+        [SerializeField] bool allowDash = false;
         
         [Header("Attack Settings")]
         [SerializeField] float attackCooldown = 0.5f;
@@ -180,6 +181,7 @@ namespace Platformer {
         }
         
         void OnDash(bool performed) {
+            if (!allowDash) return;
             if (performed && !dashTimer.IsRunning && !dashCooldownTimer.IsRunning) {
                 dashTimer.Start();
             } else if (!performed && dashTimer.IsRunning) {
@@ -262,5 +264,12 @@ namespace Platformer {
             allowDoubleJump = true;
             Debug.Log("doubleJump unlock！");
         }
+        
+        public void EnableDash()
+        {
+            allowDash = true;
+            Debug.Log("Dash ability unlocked！");
+        }
+
     }
 }
