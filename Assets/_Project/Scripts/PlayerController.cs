@@ -262,12 +262,14 @@ namespace Platformer {
         public void EnableDoubleJump()
         {
             allowDoubleJump = true;
+            UINotification.ShowNotification("Double Jump Ability Unlocked!");
             Debug.Log("doubleJump unlock！");
         }
         
         public void EnableDash()
         {
             allowDash = true;
+            UINotification.ShowNotification("Dash Ability Unlocked!");
             Debug.Log("Dash ability unlocked！");
         }
 
