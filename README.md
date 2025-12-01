@@ -1,237 +1,190 @@
 3D Platformer Game
-A feature-rich 3D platformer built with Unity 2022.3, showcasing modular systems architecture, state machine-based AI, and modern input handling.
-
-
+A feature-rich 3D platformer developed with Unity 2022.3, featuring modular systems architecture, state machine-driven AI, and modern input handling for an immersive gameplay experience.
 📋 Table of Contents
 Features
 Getting Started
-Prerequisites
-Installation
 How to Play
 Core Systems
 Project Structure
 Technical Details
 Dependencies
 Documentation
-Contributing
-License
+Acknowledgments
 ✨ Features
 Player Mechanics
-Smooth Character Movement - Camera-relative movement with dynamic rotation
-Variable Height Jumping - Hold to jump higher, release for precise control
-Double Jump Ability - Unlockable mid-air jump for advanced platforming
-Dash Ability - Burst of speed for crossing large gaps
-Melee Combat - Sphere-cast attack system with damage dealing
+Smooth Character Movement: Camera-relative movement with dynamic rotation and acceleration
+Variable Height Jumping: Hold jump for higher arcs, release for precision
+Unlockable Abilities: Double Jump and Dash for advanced traversal
+Melee Combat: Sphere-cast attack system with damage detection
+Responsive Controls: Supports both keyboard/mouse and gamepad
 Camera System
-Cinemachine Free Look Camera - Smooth 360° camera control
-Mouse & Gamepad Support - RMB activation for mouse control
-Smart Cursor Management - Automatic locking/unlocking
+Cinemachine Free Look: Smooth 360° camera with orbit controls
+Contextual Camera Lock: Automatic cursor management for mouse/gamepad switching
+Dynamic Follow: Maintains optimal view of player and environment
 AI & Enemies
-State Machine AI - Wander, Chase, and Attack behaviors
-Cone Detection System - Vision-based player detection with blind spots
-NavMesh Pathfinding - Intelligent navigation around obstacles
-Attack Cooldown System - Balanced combat timing
+State Machine Behavior: Wander, Chase, and Attack states with conditional transitions
+Vision-Based Detection: Cone-of-sight system with blind spots and detection ranges
+NavMesh Pathfinding: Intelligent obstacle avoidance and path calculation
+Balanced Combat: Attack cooldowns and proximity-based targeting
 Level Design
-Timed Platforms - Platforms that toggle visibility at intervals
-Vanishing Platforms - One-way platforms that disappear after stepping on them
-Moving Platforms - Horizontal and vertical moving platforms with wait times
-Collectible System - Ability pickups with visual feedback
+Interactive Platforms: Timed, vanishing, and moving platforms
+Collectible System: Ability pickups with visual/audio feedback
+Progressive Difficulty: Tutorial level → challenging main levels
 Architecture
-Modular State Machine - Reusable for both player and enemy behaviors
-Event-Driven Design - ScriptableObject-based event channels
-Factory Pattern Spawning - Flexible entity and collectible spawning
-Strategy Pattern Detection - Swappable detection algorithms
+Modular State Machine: Reusable for player/enemy behaviors
+Event-Driven Design: ScriptableObject-based event channels for decoupled communication
+Factory Pattern: Flexible entity/collectible spawning
+Strategy Pattern: Swappable detection and spawning logic
 🚀 Getting Started
 Prerequisites
-Unity 2022.3.x or later
-Git (for cloning the repository)
-
+Unity 2022.3 LTS or later
+Git (for repository cloning)
 Installation
-Clone the repository
-git clone https://github.com/QizhouD/Super-Platformer-3D
-Open in Unity Hub
-
-Navigate to Assets/_Project/Scenes/Level_Tutorial.unity
+Clone the repository:
+bash
+git clone https://github.com/QizhouD/Super-Platformer-3D.git  
+Open the project in Unity Hub
+Load the tutorial level: Assets/_Project/Scenes/Level_Tutorial.unity
 Press Play to start the game
 🎮 How to Play
 Controls
-Keyboard & Mouse
-WASD - Move character
-Space - Jump (hold for higher jump)
-Shift - Dash (when unlocked)
-Left Mouse Button - Attack
-Right Mouse Button (Hold) - Rotate camera
-ESC - Pause menu
-Gamepad
-Left Stick - Move character
-Right Stick - Rotate camera
-A Button - Jump
-B Button - Dash (when unlocked)
-X Button - Attack
-Start - Pause menu
+Input	Keyboard/Mouse	Gamepad
+Movement	WASD	Left Stick
+Jump	Space (hold for height)	A Button
+Dash	Shift (unlocked)	B Button
+Attack	Left Mouse Button	X Button
+Camera Rotation	Right Mouse Button (hold)	Right Stick
+Pause Menu	ESC	Start Button
 Objective
-Navigate through platforming challenges
-Collect ability pickups to unlock Double Jump and Dash
-Defeat or avoid enemies
-Reach the end of each level
+Navigate platforming challenges and collect ability pickups
+Defeat or evade enemies using combat and traversal skills
+Reach the end of each level to progress
 🏗️ Core Systems
 1. State Machine System
-A flexible, reusable state machine supporting both player and enemy behaviors.
-
-Features:
-✓ IState interface for clean state implementation
-✓ Conditional transitions with predicates
-✓ Any-state transitions
-✓ Update and FixedUpdate support
+A flexible framework for managing character behaviors with:
+IState interface for consistent state implementation
+Conditional transitions with predicate logic
+Support for Update/FixedUpdate lifecycle methods
+Any-state transitions for emergency behaviors (e.g., taking damage)
 2. Player Controller
-Camera-relative third-person controller with abilities.
-
-Features:
-✓ Smooth movement with acceleration
-✓ Variable height jumping
-✓ Double jump (unlockable)
-✓ Dash (unlockable)
-✓ Sphere-cast melee attack
+Third-person controller with:
+Camera-relative movement calculations
+Physics-based jumping with gravity scaling
+Ability cooldown management
+Attack hit detection via sphere casting
 3. Enemy AI
-State machine-driven AI with detection system.
-
-States:
-→ Wander: Random patrol within radius
-→ Chase: Pursue detected player
-→ Attack: Deal damage when in range
+State-driven behavior system:
+Wander: Random patrol within defined radius
+Chase: Pursue player when detected
+Attack: Melee strikes when in range
 4. Spawn System
-Factory pattern-based spawning with strategies.
-
-Components:
-→ EntityFactory: Creates entities from data
-→ SpawnPointStrategy: Linear or Random
-→ SpawnManager: Coordinates spawning
+Factory-pattern spawning with:
+EntityFactory for creating entities from ScriptableObject data
+SpawnPointStrategy (Linear/Random) for spawn position selection
+SpawnManager for coordinating wave-based spawning
 5. Input System
-Event-driven input using Unity's new Input System.
-
-Benefits:
-✓ ScriptableObject architecture
-✓ Device-agnostic
-✓ Easy rebinding
-✓ Decoupled from gameplay code
+Event-driven input handling using Unity’s Input System:
+ScriptableObject-based input readers
+Device-agnostic control mapping
+Easy rebinding support
+Decoupled from gameplay logic
 📁 Project Structure
-Assets/
-├── _Project/                      # Main project files
-│   ├── Scenes/                    # Game scenes
-│   │   ├── Level_Tutorial.unity
-│   │   └── Level_1.unity
-│   ├── Scripts/                   # All C# scripts
-│   │   ├── StateMachine/          # State machine framework
-│   │   │   ├── StateMachine.cs
-│   │   │   ├── IState.cs
-│   │   │   ├── PlayerStates/
-│   │   │   └── EnemyStates/
-│   │   ├── SpawnSystem/           # Spawning framework
-│   │   ├── Input/                 # Input handling
-│   │   │   └── InputReader.cs
-│   │   ├── UI/                    # UI controllers
-│   │   ├── Utils/                 # Utilities & helpers
-│   │   │   └── Timer.cs
-│   │   ├── PlayerController.cs
-│   │   ├── CameraManager.cs
-│   │   ├── Enemy.cs
-│   │   ├── Health.cs
-│   │   └── PlayerDetector.cs
-│   ├── Prefabs/                   # Reusable GameObjects
-│   ├── Materials/                 # Materials
-│   ├── Models/                    # 3D models
-│   ├── Animation/                 # Animation assets
-│   └── ScriptableObjects/         # Data assets
-│       └── EventChannels/
-├── Plugins/                       # Third-party plugins
-└── TextMesh Pro/                  # TMP assets
+plaintext
+Assets/  
+├── _Project/                      # Core project files  
+│   ├── Scenes/                    # Game levels & menus  
+│   ├── Scripts/                   # C# scripts  
+│   │   ├── StateMachine/          # State machine framework  
+│   │   ├── SpawnSystem/           # Entity spawning  
+│   │   ├── Input/                 # Input handling  
+│   │   ├── UI/                    # UI controllers  
+│   │   ├── Utils/                 # Helpers & utilities  
+│   │   └── Core/                  # Player/Enemy/Camera logic  
+│   ├── Prefabs/                   # Reusable GameObjects  
+│   ├── Materials/                 # Shaders & materials  
+│   ├── Models/                    # 3D assets  
+│   ├── Animation/                 # Animator controllers & clips  
+│   └── ScriptableObjects/         # Data assets (events, settings)  
+├── Plugins/                       # Third-party tools  
+└── TextMesh Pro/                  # UI text assets  
 🔧 Technical Details
-Unity Version
-Unity 2022.3 LTS
-
-Render Pipeline
-Universal Render Pipeline (URP) 14.0.8
-
-Physics
-3D Physics with Rigidbody-based movement
-NavMesh for enemy pathfinding
-Sphere casting for attack detection
-Animation
-Animator State Machines for character animations
-Animation Events for attack timing
-CrossFade for smooth transitions
-Code Architecture
-Design Patterns Used
-State Pattern - Player and enemy behaviors
-Factory Pattern - Entity spawning
-Strategy Pattern - Detection algorithms, spawn point selection
-Observer Pattern - Event channels for decoupled communication
-Object Pool Pattern - Ready for entity pooling (future optimization)
+Unity Configuration
+Version: Unity 2022.3 LTS
+Render Pipeline: Universal Render Pipeline (URP) 14.0.8
+Physics: 3D Rigidbody physics with NavMesh pathfinding
+Animation: Animator State Machines with Animation Events
+Design Patterns
+State Pattern: Player/enemy behavior management
+Factory Pattern: Entity spawning
+Observer Pattern: Event-driven communication
+Strategy Pattern: Detection/spawning logic
+Object Pool Pattern: (Planned) For performance optimization
 Coding Standards
-Self-explanatory naming conventions
+Self-documenting naming conventions
 XML comments for public APIs
-Constants instead of magic numbers
-Modular, single-responsibility classes
+Single-responsibility principle
+Separation of concerns (data vs. logic)
 📦 Dependencies
 Unity Packages
 Package	Version	Purpose
-Input System	1.6.1	Modern input handling
+Input System	1.6.1	Cross-device input
 Cinemachine	2.9.7	Camera control
 AI Navigation	1.1.7	NavMesh pathfinding
-Universal RP	14.0.8	Rendering pipeline
-TextMesh Pro	3.0.6	UI text rendering
-ProBuilder	5.0.7	Level geometry
-External Packages
-Package	Source	Purpose
-Scene Ref Attribute	GitHub	Scene reference validation
-DOTween	Demigiant	Tweening animations
+Universal RP	14.0.8	Rendering
+TextMesh Pro	3.0.6	UI text
+ProBuilder	5.0.7	Level design
+External Tools
+DOTween: Animation tweening (Demigiant)
+Scene Ref Attribute: Scene reference validation (GitHub)
 Asset Store Assets
-RPG Monster DUO PBR Polyart
-RPG Tiny Hero Duo
-Low Poly Ultimate Pack
-Casual Game Sounds
+Character/Enemy Models: RPG Tiny Hero Duo, RPG Monster DUO PBR Polyart
+Environment: Low Poly Ultimate Pack
+Audio: Casual Game Sounds
 📚 Documentation
-Full System Documentation
-For detailed documentation on all systems, see the Systems Documentation.
-
-Key Systems Overview
-Player Controller - Movement, jumping, abilities
-State Machine - Architecture and usage
-Enemy AI - Behavior and states
-Spawn System - Factory pattern implementation
-Input System - Event-driven input handling
-Detection System - Cone detection strategy
+System Guides
+Player Controller: Movement, abilities, and combat
+State Machine: Architecture and state creation
+Enemy AI: Behavior states and detection logic
+Spawn System: Factory pattern implementation
 Code Examples
 Creating a New Player State
-public class CustomState : BaseState {
-    public CustomState(PlayerController player, Animator animator) 
-        : base(player, animator) { }
-    
-    public override void OnEnter() {
-        animator.CrossFade(CustomHash, crossFadeDuration);
-    }
-    
-    public override void FixedUpdate() {
-        player.HandleMovement();
-        // Custom logic here
-    }
-}
-Adding a State Transition
-At(locomotionState, customState, 
-   new FuncPredicate(() => customCondition));
+csharp
+public class DashState : BaseState {  
+    public DashState(PlayerController player, Animator animator) : base(player, animator) {}  
 
+    public override void OnEnter() {  
+        animator.CrossFade("Dash", 0.1f);  
+        player.ApplyDashForce();  
+    }  
 
+    public override void FixedUpdate() {  
+        // Dash logic here  
+    }  
+
+    public override void OnExit() {  
+        player.ResetDashState();  
+    }  
+}  
+Adding an Event Listener
+csharp
+[SerializeField] private GameEvent onPlayerDash;  
+
+private void OnEnable() {  
+    onPlayerDash.AddListener(HandleDash);  
+}  
+
+private void HandleDash() {  
+    // React to dash event  
+}  
 🙏 Acknowledgments
 Learning Resources
-Unity Documentation
-Cinemachine Documentation
-Input System Documentation
+Unity Official Documentation
+Cinemachine & Input System Tutorials
+GameDev.tv Unity Courses
 Asset Credits
-Character Models: RPG Tiny Hero Duo
-Enemy Models: RPG Monster DUO PBR Polyart
-Environment: Low Poly Ultimate Pack
-Sound Effects: Casual Game Sounds
-Tools & Libraries
-KBCore.Refs - Component validation
-DOTween - Animation tweening
-Scene Ref Attribute - Scene reference handling
+RPG Tiny Hero Duo
+RPG Monster DUO PBR Polyart
+Low Poly Ultimate Pack
+Tools
+DOTween
+KBCore.Refs
