@@ -1,4 +1,5 @@
-namespace Utilities {
+using UnityEngine;
+namespace Platformer._Project.Scripts.Utils {
     public static class Helpers {
         public static void QuitGame() {
 #if UNITY_EDITOR

@@ -1,5 +1,4 @@
 using UnityEngine;
-using Unity.UI;
 public class ResetPlayer : MonoBehaviour
 {
     [Header("ResetPlayer")]
