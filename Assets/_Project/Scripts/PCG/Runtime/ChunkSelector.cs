@@ -15,7 +15,12 @@ namespace Platformer.PCG {
             ChunkCategory? previousCategory = null,
             int consecutiveCategoryCount = 0,
             int maximumConsecutiveCategory = 2,
-            PlayerTraversalCapabilities? traversalCapabilities = null) {
+            PlayerTraversalCapabilities? traversalCapabilities = null,
+            bool requireElevationChange = false,
+            bool requireDirectionChange = false,
+            float currentElevation = 0f,
+            float minimumElevation = float.NegativeInfinity,
+            float maximumElevation = float.PositiveInfinity) {
             candidates.Clear();
             weights.Clear();
 
@@ -26,6 +31,10 @@ namespace Platformer.PCG {
                 if (!abilities.Supports(chunk.RequiredAbility)) continue;
                 if (traversalCapabilities.HasValue &&
                     !ChunkReachabilityValidator.CanTraverse(chunk, abilities, traversalCapabilities.Value)) continue;
+                if (requireElevationChange && !chunk.ChangesElevation) continue;
+                if (requireDirectionChange && !chunk.ChangesDirection) continue;
+                var predictedElevation = currentElevation + chunk.ElevationDelta;
+                if (predictedElevation < minimumElevation || predictedElevation > maximumElevation) continue;
                 if (previousCategory.HasValue &&
                     chunk.Category == previousCategory.Value &&
                     consecutiveCategoryCount >= maximumConsecutiveCategory) continue;

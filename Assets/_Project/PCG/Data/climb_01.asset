@@ -10,21 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cfb2f27374d18054f8189c74a252eebf, type: 3}
-  m_Name: basic_01
+  m_Name: climb_01
   m_EditorClassIdentifier: 
-  chunkId: basic_01
-  prefab: {fileID: 7062278362201813347, guid: 80694f9f1e937724b94233b4d5998933, type: 3}
+  chunkId: climb_01
+  prefab: {fileID: 5442818288483450697, guid: fcc70278c56d5234689f4bcd54eab012, type: 3}
   category: 0
   requiredAbility: 0
-  traversalDifficulty: 0.12
+  traversalDifficulty: 0.44
   combatDifficulty: 0
-  precisionDifficulty: 0.1
+  precisionDifficulty: 0.48
   explorationScore: 0
   weight: 1
   minimumProgress: 0
-  requiredHorizontalReach: 0
-  requiredVerticalReach: 0
-  elevationDelta: 0
+  requiredHorizontalReach: 2.5
+  requiredVerticalReach: 1
+  elevationDelta: 2
   headingDelta: 0
   lateralDelta: 0
   allowRotation: 0

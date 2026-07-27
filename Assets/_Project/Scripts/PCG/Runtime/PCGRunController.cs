@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Platformer.PCG {
@@ -12,6 +13,8 @@ namespace Platformer.PCG {
 
         public int FurthestCheckpoint { get; private set; } = -1;
         public int ResetCount { get; private set; }
+        public event Action<int, Vector3> CheckpointReached;
+        public event Action<int, Vector3> PlayerRespawned;
 
         void Awake() {
             if (player == null) {
@@ -57,6 +60,7 @@ namespace Platformer.PCG {
             } else {
                 player.SetPositionAndRotation(respawnPosition, respawnRotation);
             }
+            PlayerRespawned?.Invoke(ResetCount, respawnPosition);
         }
 
         void HandleCheckpointReached(int chunkIndex, Vector3 position) {
@@ -64,6 +68,7 @@ namespace Platformer.PCG {
             FurthestCheckpoint = chunkIndex;
             respawnPosition = position + Vector3.up * 1.5f;
             respawnRotation = Quaternion.identity;
+            CheckpointReached?.Invoke(chunkIndex, position);
         }
     }
 }

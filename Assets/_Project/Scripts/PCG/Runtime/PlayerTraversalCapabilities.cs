@@ -32,7 +32,7 @@ namespace Platformer.PCG {
             baseVerticalReach + (abilities.HasDoubleJump ? doubleJumpVerticalBonus : 0f);
 
         public static PlayerTraversalCapabilities LabDefaults =>
-            new PlayerTraversalCapabilities(6f, 1.8f, 5f, 2.5f);
+            new PlayerTraversalCapabilities(6.5f, 1.8f, 5f, 2.5f);
     }
 
     public static class ChunkReachabilityValidator {

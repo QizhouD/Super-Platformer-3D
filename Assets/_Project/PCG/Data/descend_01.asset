@@ -10,21 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cfb2f27374d18054f8189c74a252eebf, type: 3}
-  m_Name: basic_01
+  m_Name: descend_01
   m_EditorClassIdentifier: 
-  chunkId: basic_01
-  prefab: {fileID: 7062278362201813347, guid: 80694f9f1e937724b94233b4d5998933, type: 3}
-  category: 0
+  chunkId: descend_01
+  prefab: {fileID: 7150455132292817205, guid: 8901a87c7d31c7a48b5f9cdf5bb9b2ce, type: 3}
+  category: 6
   requiredAbility: 0
-  traversalDifficulty: 0.12
+  traversalDifficulty: 0.34
   combatDifficulty: 0
-  precisionDifficulty: 0.1
+  precisionDifficulty: 0.32
   explorationScore: 0
   weight: 1
   minimumProgress: 0
-  requiredHorizontalReach: 0
+  requiredHorizontalReach: 2.5
   requiredVerticalReach: 0
-  elevationDelta: 0
+  elevationDelta: -2
   headingDelta: 0
   lateralDelta: 0
   allowRotation: 0

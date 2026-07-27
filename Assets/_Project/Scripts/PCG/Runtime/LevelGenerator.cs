@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,11 +12,17 @@ namespace Platformer.PCG {
         [SerializeField, Min(0)] int chunkCountOverride;
         [SerializeField] bool generateOnStart = true;
 
+        [Header("Spatial grammar")]
+        [SerializeField, Range(1, 6)] int maximumConsecutiveFlatChunks = 3;
+        [SerializeField, Range(1, 6)] int maximumConsecutiveStraightChunks = 3;
+        [SerializeField] float minimumRelativeElevation = -4f;
+        [SerializeField] float maximumRelativeElevation = 8f;
+
         [Header("Player capabilities")]
         [SerializeField] bool hasDoubleJump;
         [SerializeField] bool hasDash;
         [SerializeField] PlayerTraversalCapabilities traversalCapabilities =
-            new PlayerTraversalCapabilities(6f, 1.8f, 5f, 2.5f);
+            new PlayerTraversalCapabilities(6.5f, 1.8f, 5f, 2.5f);
 
         readonly List<PlatformChunk> spawnedChunks = new List<PlatformChunk>();
         readonly ChunkSelector selector = new ChunkSelector();
@@ -28,6 +35,7 @@ namespace Platformer.PCG {
 
         public GeneratedLevelManifest LastManifest { get; private set; }
         public IReadOnlyList<PlatformChunk> SpawnedChunks => spawnedChunks;
+        public event Action<GeneratedLevelManifest> GenerationFinished;
 
         void Start() {
             if (generateOnStart) Generate();
@@ -60,6 +68,10 @@ namespace Platformer.PCG {
             var currentAnchor = startAnchor;
             ChunkCategory? previousCategory = null;
             var consecutiveCategoryCount = 0;
+            var consecutiveFlatCount = 0;
+            var consecutiveStraightCount = 0;
+            var startElevation = startAnchor.position.y;
+            var currentElevation = 0f;
 
             for (var index = 0; index < count; index++) {
                 var placed = false;
@@ -75,7 +87,12 @@ namespace Platformer.PCG {
                         previousCategory,
                         consecutiveCategoryCount,
                         config.MaximumConsecutiveCategory,
-                        traversalCapabilities);
+                        traversalCapabilities,
+                        consecutiveFlatCount >= maximumConsecutiveFlatChunks,
+                        consecutiveStraightCount >= maximumConsecutiveStraightChunks,
+                        currentElevation,
+                        minimumRelativeElevation,
+                        maximumRelativeElevation);
 
                     if (data == null) break;
 
@@ -105,7 +122,11 @@ namespace Platformer.PCG {
                         consecutiveCategoryCount = 1;
                     }
 
+                    consecutiveFlatCount = data.ChangesElevation ? 0 : consecutiveFlatCount + 1;
+                    consecutiveStraightCount = data.ChangesDirection ? 0 : consecutiveStraightCount + 1;
+
                     currentAnchor = candidate.Exits[random.Range(0, candidate.Exits.Count)];
+                    currentElevation = currentAnchor.position.y - startElevation;
                     CreateCheckpoint(candidate, currentAnchor, index);
                     placed = true;
                     break;
@@ -118,6 +139,7 @@ namespace Platformer.PCG {
             }
 
             LastManifest.completed = true;
+            GenerationFinished?.Invoke(LastManifest);
         }
 
         public void SetCapabilities(bool doubleJump, bool dash) {
@@ -169,9 +191,10 @@ namespace Platformer.PCG {
             LastManifest.completed = false;
             LastManifest.failureReason = reason;
             Debug.LogError($"PCG generation failed: {reason}", this);
+            GenerationFinished?.Invoke(LastManifest);
         }
 
-        static void DestroyGeneratedObject(Object target) {
+        static void DestroyGeneratedObject(UnityEngine.Object target) {
             if (Application.isPlaying) Destroy(target);
             else DestroyImmediate(target);
         }

@@ -11,7 +11,7 @@ This folder contains the deterministic PCG assets and the playable validation la
 5. Toggle `Double Jump` or `Dash` to unlock the same ability on Player 2 and include gated chunks.
 6. Use `Copy Seed` or `Copy Manifest` to reproduce a generated layout.
 
-The default seed is `82431` and the default level contains 12 chunks.
+The default seed is `82431` and the default level contains 16 chunks.
 
 The lab reuses the `Player 2` prefab, `InputReader`, `CameraManager`, and Cinemachine
 FreeLook setup from `Level_Tutorial`. Each generated chunk adds an exit checkpoint.
@@ -28,6 +28,12 @@ known-unplayable ability gate.
 
 - `basic_01`
 - `rising_01`
+- `turn_left_01`
+- `turn_right_01`
+- `offset_left_01`
+- `climb_01`
+- `descend_01`
+- `climb_turn_left_01`
 - `moving_01`
 - `timed_01`
 - `double_jump_01`
@@ -35,9 +41,25 @@ known-unplayable ability gate.
 - `combat_01`
 - `recovery_01`
 
-`moving_01` and `timed_01` are geometry archetypes in this milestone. Their runtime
-movement/toggle behaviours will be connected after the deterministic generation and
-validation layer is stable.
+`moving_01` contains a deterministic lateral oscillating platform. `timed_01`
+contains a telegraphed platform cycling through visible, warning, and hidden states.
+
+The spatial grammar limits consecutive flat and straight chunks to three. Turn,
+lateral-offset, climb, descent, and combined climb-turn chunks are selected when a
+path would otherwise become repetitive. Relative elevation is constrained to
+`-4m...+8m` to prevent runaway vertical layouts. Horizontal platform placement is
+scaled by `1.25x`, while platform footprints are scaled by `1.05x`, producing wider
+gaps and a larger overall play area without exceeding the configured traversal model.
+
+PCG platforms reuse `NoiseGround.mat` from `Level_Tutorial`; the disappearing surface
+inside `timed_01` uses the tutorial `TimedPlatform.mat`.
+
+## Runtime telemetry
+
+`PCGRunTelemetry` records generation completion, checkpoint progress, player
+respawns, and timed-platform state changes. It also maintains a lightweight player
+position/velocity snapshot for future Game AI observation. Use `Copy Telemetry` in
+the debug panel to export the current run as JSON.
 
 ## Regenerate assets
 

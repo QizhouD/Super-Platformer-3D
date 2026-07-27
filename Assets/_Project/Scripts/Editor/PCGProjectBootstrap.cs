@@ -17,8 +17,12 @@ public static class PCGProjectBootstrap {
     const string PlayerPrefabPath = "Assets/_Project/Prefabs/Player 2.prefab";
     const string InputReaderPath = "Assets/_Project/ScriptableObjects/InputReader.asset";
     const string ScenePath = "Assets/_Project/Scenes/PCG_Lab.unity";
-    const int BootstrapVersion = 5;
+    const int BootstrapVersion = 8;
     const float LabCameraSensitivity = 2f;
+    const float HorizontalLayoutScale = 1.25f;
+    const float PlatformFootprintScale = 1.05f;
+    const string TutorialGroundMaterialPath = "Assets/_Project/_Shaders/NoiseGround.mat";
+    const string TutorialTimedMaterialPath = "Assets/_Project/Materials/TimedPlatform.mat";
 
     static string BootstrapVersionKey =>
         $"Platformer.PCG.Bootstrap.{Application.dataPath.GetHashCode()}";
@@ -63,6 +67,42 @@ public static class PCGProjectBootstrap {
                     new PlatformSpec(new Vector3(0f, 0f, 2.5f), new Vector3(5f, 1f, 5f)),
                     new PlatformSpec(new Vector3(0f, 1.2f, 7.5f), new Vector3(5f, 1f, 5f))
                 }, new Vector3(0f, 1.7f, 10f), horizontalReach: 2.5f, verticalReach: 1.2f),
+            new ChunkDefinition("turn_left_01", ChunkCategory.Exploration, AbilityRequirement.None, 0.3f, 0f, 0.35f,
+                new[] {
+                    new PlatformSpec(new Vector3(0f, 0f, 2.5f), new Vector3(5f, 1f, 5f)),
+                    new PlatformSpec(new Vector3(-2.5f, 0f, 5f), new Vector3(5f, 1f, 5f)),
+                    new PlatformSpec(new Vector3(-5f, 0f, 7.5f), new Vector3(5f, 1f, 5f))
+                }, new Vector3(-7.5f, 0.5f, 7.5f), exitYaw: -90f),
+            new ChunkDefinition("turn_right_01", ChunkCategory.Exploration, AbilityRequirement.None, 0.3f, 0f, 0.35f,
+                new[] {
+                    new PlatformSpec(new Vector3(0f, 0f, 2.5f), new Vector3(5f, 1f, 5f)),
+                    new PlatformSpec(new Vector3(2.5f, 0f, 5f), new Vector3(5f, 1f, 5f)),
+                    new PlatformSpec(new Vector3(5f, 0f, 7.5f), new Vector3(5f, 1f, 5f))
+                }, new Vector3(7.5f, 0.5f, 7.5f), exitYaw: 90f),
+            new ChunkDefinition("offset_left_01", ChunkCategory.Exploration, AbilityRequirement.None, 0.36f, 0f, 0.4f,
+                new[] {
+                    new PlatformSpec(new Vector3(0f, 0f, 2f), new Vector3(4f, 1f, 4f)),
+                    new PlatformSpec(new Vector3(-2f, 0.4f, 5.5f), new Vector3(3.5f, 0.7f, 3f)),
+                    new PlatformSpec(new Vector3(-3.5f, 0f, 9f), new Vector3(4f, 1f, 4f))
+                }, new Vector3(-3.5f, 0.5f, 11f), horizontalReach: 2.5f, verticalReach: 0.4f),
+            new ChunkDefinition("climb_01", ChunkCategory.Basic, AbilityRequirement.None, 0.44f, 0f, 0.48f,
+                new[] {
+                    new PlatformSpec(new Vector3(0f, 0f, 2f), new Vector3(4.5f, 1f, 4f)),
+                    new PlatformSpec(new Vector3(0f, 1f, 5f), new Vector3(4f, 1f, 3f)),
+                    new PlatformSpec(new Vector3(0f, 2f, 8f), new Vector3(4.5f, 1f, 4f))
+                }, new Vector3(0f, 2.5f, 10f), horizontalReach: 2f, verticalReach: 1f),
+            new ChunkDefinition("descend_01", ChunkCategory.Recovery, AbilityRequirement.None, 0.34f, 0f, 0.32f,
+                new[] {
+                    new PlatformSpec(new Vector3(0f, 0f, 2f), new Vector3(4.5f, 1f, 4f)),
+                    new PlatformSpec(new Vector3(0f, -1f, 5f), new Vector3(4f, 1f, 3f)),
+                    new PlatformSpec(new Vector3(0f, -2f, 8f), new Vector3(4.5f, 1f, 4f))
+                }, new Vector3(0f, -1.5f, 10f), horizontalReach: 2f),
+            new ChunkDefinition("climb_turn_left_01", ChunkCategory.Exploration, AbilityRequirement.None, 0.52f, 0f, 0.55f,
+                new[] {
+                    new PlatformSpec(new Vector3(0f, 0f, 2f), new Vector3(4f, 1f, 4f)),
+                    new PlatformSpec(new Vector3(-2f, 1f, 4.5f), new Vector3(4f, 1f, 3.5f)),
+                    new PlatformSpec(new Vector3(-4.5f, 2f, 6.5f), new Vector3(5f, 1f, 4f))
+                }, new Vector3(-7f, 2.5f, 6.5f), horizontalReach: 2.5f, verticalReach: 1f, exitYaw: -90f),
             new ChunkDefinition("moving_01", ChunkCategory.Moving, AbilityRequirement.None, 0.42f, 0f, 0.45f,
                 new[] {
                     new PlatformSpec(new Vector3(0f, 0f, 1.5f), new Vector3(4f, 1f, 3f)),
@@ -93,15 +133,21 @@ public static class PCGProjectBootstrap {
                 new Vector3(0f, 0.5f, 7f), horizontalReach: 0f, verticalReach: 0f)
         };
 
+        var groundMaterial = AssetDatabase.LoadAssetAtPath<Material>(TutorialGroundMaterialPath);
+        var timedMaterial = AssetDatabase.LoadAssetAtPath<Material>(TutorialTimedMaterialPath);
+        if (groundMaterial == null || timedMaterial == null)
+            throw new InvalidOperationException("Tutorial platform materials are missing.");
+
         var dataAssets = new List<PlatformChunkData>();
-        foreach (var definition in definitions) dataAssets.Add(CreateChunk(definition));
+        foreach (var definition in definitions)
+            dataAssets.Add(CreateChunk(definition, groundMaterial, timedMaterial));
 
         var config = AssetDatabase.LoadAssetAtPath<LevelGenerationConfig>(ConfigPath);
         if (config == null) {
             config = ScriptableObject.CreateInstance<LevelGenerationConfig>();
             AssetDatabase.CreateAsset(config, ConfigPath);
         }
-        config.Configure(dataAssets.ToArray(), 12);
+        config.Configure(dataAssets.ToArray(), 16);
         EditorUtility.SetDirty(config);
 
         CreateLabScene(config);
@@ -116,20 +162,41 @@ public static class PCGProjectBootstrap {
         EditorApplication.Exit(0);
     }
 
-    static PlatformChunkData CreateChunk(ChunkDefinition definition) {
+    static PlatformChunkData CreateChunk(
+        ChunkDefinition definition,
+        Material groundMaterial,
+        Material timedMaterial) {
         var root = new GameObject(definition.Id);
         var chunk = root.AddComponent<PlatformChunk>();
 
         var entry = CreateSocket(root.transform, "Entry", new Vector3(0f, 0.5f, 0f));
-        var exit = CreateSocket(root.transform, "Exit", definition.Exit);
+        var scaledExit = ScaleHorizontal(definition.Exit, HorizontalLayoutScale);
+        var exit = CreateSocket(root.transform, "Exit", scaledExit, definition.ExitYaw);
 
         for (var i = 0; i < definition.Platforms.Length; i++) {
             var platform = GameObject.CreatePrimitive(PrimitiveType.Cube);
             platform.name = $"Platform_{i:00}";
             platform.transform.SetParent(root.transform);
-            platform.transform.localPosition = definition.Platforms[i].Position;
-            platform.transform.localScale = definition.Platforms[i].Scale;
+            platform.transform.localPosition =
+                ScaleHorizontal(definition.Platforms[i].Position, HorizontalLayoutScale);
+            platform.transform.localScale =
+                ScaleFootprint(definition.Platforms[i].Scale, PlatformFootprintScale);
             platform.layer = LayerMask.NameToLayer("Ground");
+            platform.GetComponent<Renderer>().sharedMaterial =
+                definition.Category == ChunkCategory.Timed && i == 1
+                    ? timedMaterial
+                    : groundMaterial;
+
+            if (definition.Category == ChunkCategory.Moving && i == 1) {
+                platform.tag = "MovingPlatform";
+                platform.AddComponent<PCGOscillatingPlatform>()
+                    .Configure(new Vector3(-3f * HorizontalLayoutScale, 0f, 0f), 1.8f, 0.4f);
+            }
+
+            if (definition.Category == ChunkCategory.Timed && i == 1) {
+                platform.AddComponent<PCGTimedPlatform>()
+                    .Configure(2.5f, 0.8f, 1.4f, 0.4f);
+            }
         }
 
         Transform[] enemySlots = Array.Empty<Transform>();
@@ -167,8 +234,11 @@ public static class PCGProjectBootstrap {
             definition.Precision,
             1f,
             definition.MinimumProgress,
-            definition.HorizontalReach,
-            definition.VerticalReach);
+            definition.HorizontalReach * HorizontalLayoutScale,
+            definition.VerticalReach,
+            scaledExit.y - 0.5f,
+            definition.ExitYaw,
+            scaledExit.x);
         EditorUtility.SetDirty(data);
         return data;
     }
@@ -200,6 +270,8 @@ public static class PCGProjectBootstrap {
         startVisual.transform.localPosition = Vector3.zero;
         startVisual.transform.localScale = new Vector3(8f, 1f, 7f);
         startVisual.layer = LayerMask.NameToLayer("Ground");
+        startVisual.GetComponent<Renderer>().sharedMaterial =
+            AssetDatabase.LoadAssetAtPath<Material>(TutorialGroundMaterialPath);
         var anchor = CreateSocket(start.transform, "Start Anchor", new Vector3(0f, 0.5f, 3.5f));
 
         var spawn = CreateSocket(start.transform, "Player Spawn", new Vector3(0f, 1.5f, 0f));
@@ -235,8 +307,10 @@ public static class PCGProjectBootstrap {
         generator.SetTraversalCapabilities(PlayerTraversalCapabilities.LabDefaults);
         var runController = system.AddComponent<PCGRunController>();
         runController.Configure(playerObject.transform, spawn);
+        var telemetry = system.AddComponent<PCGRunTelemetry>();
+        telemetry.Configure(generator, runController, playerObject.transform);
         var panel = system.AddComponent<PCGDebugPanel>();
-        panel.Configure(generator, playerObject, runController);
+        panel.Configure(generator, playerObject, runController, telemetry);
 
         EditorSceneManager.SaveScene(scene, ScenePath);
         AddSceneToBuildSettings(ScenePath);
@@ -246,13 +320,23 @@ public static class PCGProjectBootstrap {
         if (!reuseLoadedScene) EditorSceneManager.CloseScene(scene, true);
     }
 
-    static Transform CreateSocket(Transform parent, string name, Vector3 localPosition) {
+    static Transform CreateSocket(
+        Transform parent,
+        string name,
+        Vector3 localPosition,
+        float localYaw = 0f) {
         var socket = new GameObject(name).transform;
         socket.SetParent(parent);
         socket.localPosition = localPosition;
-        socket.localRotation = Quaternion.identity;
+        socket.localRotation = Quaternion.Euler(0f, localYaw, 0f);
         return socket;
     }
+
+    static Vector3 ScaleHorizontal(Vector3 value, float scale) =>
+        new Vector3(value.x * scale, value.y, value.z * scale);
+
+    static Vector3 ScaleFootprint(Vector3 value, float scale) =>
+        new Vector3(value.x * scale, value.y, value.z * scale);
 
     static CinemachineFreeLook CreateTutorialCameraRig(InputReader inputReader, Transform player) {
         var cameraSystem = new GameObject("CameraSystem");
@@ -352,6 +436,7 @@ public static class PCGProjectBootstrap {
         public readonly int MinimumProgress;
         public readonly float HorizontalReach;
         public readonly float VerticalReach;
+        public readonly float ExitYaw;
 
         public ChunkDefinition(
             string id,
@@ -364,7 +449,8 @@ public static class PCGProjectBootstrap {
             Vector3 exit,
             int minimumProgress = 0,
             float horizontalReach = 0f,
-            float verticalReach = 0f) {
+            float verticalReach = 0f,
+            float exitYaw = 0f) {
             Id = id;
             Category = category;
             Ability = ability;
@@ -376,6 +462,7 @@ public static class PCGProjectBootstrap {
             MinimumProgress = minimumProgress;
             HorizontalReach = horizontalReach;
             VerticalReach = verticalReach;
+            ExitYaw = exitYaw;
         }
     }
 }

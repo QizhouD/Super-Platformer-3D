@@ -15,6 +15,9 @@ namespace Platformer.PCG {
         [SerializeField, Min(0)] int minimumProgress;
         [SerializeField, Min(0f)] float requiredHorizontalReach;
         [SerializeField, Min(0f)] float requiredVerticalReach;
+        [SerializeField] float elevationDelta;
+        [SerializeField] float headingDelta;
+        [SerializeField] float lateralDelta;
         [SerializeField] bool allowRotation;
         [SerializeField] string[] tags = new string[0];
 
@@ -30,6 +33,13 @@ namespace Platformer.PCG {
         public int MinimumProgress => minimumProgress;
         public float RequiredHorizontalReach => requiredHorizontalReach;
         public float RequiredVerticalReach => requiredVerticalReach;
+        public float ElevationDelta => elevationDelta;
+        public float HeadingDelta => headingDelta;
+        public float LateralDelta => lateralDelta;
+        public bool ChangesElevation => Mathf.Abs(elevationDelta) > 0.1f;
+        public bool ChangesDirection =>
+            Mathf.Abs(headingDelta) > 1f || Mathf.Abs(lateralDelta) > 0.1f;
+        public bool IsSpatialVariation => ChangesElevation || ChangesDirection;
         public bool AllowRotation => allowRotation;
         public string[] Tags => tags;
 
@@ -47,7 +57,10 @@ namespace Platformer.PCG {
             float selectionWeight = 1f,
             int minProgress = 0,
             float horizontalReach = 0f,
-            float verticalReach = 0f) {
+            float verticalReach = 0f,
+            float elevationChange = 0f,
+            float headingChange = 0f,
+            float lateralChange = 0f) {
             chunkId = id;
             prefab = chunkPrefab;
             category = chunkCategory;
@@ -59,6 +72,9 @@ namespace Platformer.PCG {
             minimumProgress = Mathf.Max(0, minProgress);
             requiredHorizontalReach = Mathf.Max(0f, horizontalReach);
             requiredVerticalReach = Mathf.Max(0f, verticalReach);
+            elevationDelta = elevationChange;
+            headingDelta = Mathf.DeltaAngle(0f, headingChange);
+            lateralDelta = lateralChange;
         }
     }
 }

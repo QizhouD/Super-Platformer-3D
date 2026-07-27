@@ -6,6 +6,7 @@ namespace Platformer.PCG {
         [SerializeField] LevelGenerator generator;
         [SerializeField] GameObject player;
         [SerializeField] PCGRunController runController;
+        [SerializeField] PCGRunTelemetry telemetry;
 
         string seedText = "82431";
         bool doubleJump;
@@ -20,10 +21,12 @@ namespace Platformer.PCG {
         public void Configure(
             LevelGenerator levelGenerator,
             GameObject labPlayer = null,
-            PCGRunController labRunController = null) {
+            PCGRunController labRunController = null,
+            PCGRunTelemetry runTelemetry = null) {
             generator = levelGenerator;
             player = labPlayer;
             runController = labRunController;
+            telemetry = runTelemetry;
             if (generator != null) seedText = generator.Seed.ToString();
         }
 
@@ -35,6 +38,8 @@ namespace Platformer.PCG {
             GUILayout.Label("Move: WASD / Jump: Space / Dash: Shift");
             if (runController != null)
                 GUILayout.Label($"Checkpoint: {runController.FurthestCheckpoint + 1}   Resets: {runController.ResetCount}");
+            if (telemetry != null)
+                GUILayout.Label($"Telemetry events: {telemetry.Events.Count}");
 
             GUILayout.BeginHorizontal();
             GUILayout.Label("Seed", GUILayout.Width(55f));
@@ -55,6 +60,8 @@ namespace Platformer.PCG {
             if (GUILayout.Button("Copy Seed")) GUIUtility.systemCopyBuffer = generator.Seed.ToString();
             if (GUILayout.Button("Copy Manifest") && generator.LastManifest != null)
                 GUIUtility.systemCopyBuffer = generator.LastManifest.ToJson();
+            if (GUILayout.Button("Copy Telemetry") && telemetry != null)
+                GUIUtility.systemCopyBuffer = telemetry.ToJson();
             GUILayout.EndHorizontal();
 
             var manifest = generator.LastManifest;

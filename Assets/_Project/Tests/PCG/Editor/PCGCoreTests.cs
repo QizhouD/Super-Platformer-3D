@@ -152,6 +152,109 @@ namespace Platformer.PCG.Tests {
         }
 
         [Test]
+        public void ChunkSelector_EnforcesRequestedSpatialVariation() {
+            var flat = CreateData("flat", AbilityRequirement.None);
+            var climbTurn = CreateData(
+                "climb-turn",
+                AbilityRequirement.None,
+                elevationDelta: 2f,
+                headingDelta: -90f,
+                lateralDelta: -5f);
+            var selector = new ChunkSelector();
+
+            var selected = selector.Select(
+                new[] { flat, climbTurn },
+                4,
+                0.5f,
+                new PlayerAbilityProfile(),
+                new DeterministicRandom(12),
+                traversalCapabilities: PlayerTraversalCapabilities.LabDefaults,
+                requireElevationChange: true,
+                requireDirectionChange: true);
+
+            Assert.That(selected, Is.SameAs(climbTurn));
+        }
+
+        [Test]
+        public void ChunkSelector_RejectsChunksOutsideElevationEnvelope() {
+            var climb = CreateData(
+                "climb",
+                AbilityRequirement.None,
+                elevationDelta: 2f);
+            var descend = CreateData(
+                "descend",
+                AbilityRequirement.None,
+                elevationDelta: -2f);
+            var selector = new ChunkSelector();
+
+            var selected = selector.Select(
+                new[] { climb, descend },
+                8,
+                0.5f,
+                new PlayerAbilityProfile(),
+                new DeterministicRandom(4),
+                traversalCapabilities: PlayerTraversalCapabilities.LabDefaults,
+                requireElevationChange: true,
+                currentElevation: 5f,
+                minimumElevation: -2.5f,
+                maximumElevation: 6f);
+
+            Assert.That(selected, Is.SameAs(descend));
+        }
+
+        [Test]
+        public void OscillatingPlatform_EvaluatesPauseTravelAndReturnPhases() {
+            const float duration = 2f;
+            const float pause = 0.5f;
+
+            Assert.That(
+                PCGOscillatingPlatform.EvaluateNormalizedPosition(0.25f, duration, pause),
+                Is.EqualTo(0f).Within(0.0001f));
+            Assert.That(
+                PCGOscillatingPlatform.EvaluateNormalizedPosition(1.5f, duration, pause),
+                Is.EqualTo(0.5f).Within(0.0001f));
+            Assert.That(
+                PCGOscillatingPlatform.EvaluateNormalizedPosition(2.75f, duration, pause),
+                Is.EqualTo(1f).Within(0.0001f));
+            Assert.That(
+                PCGOscillatingPlatform.EvaluateNormalizedPosition(4f, duration, pause),
+                Is.EqualTo(0.5f).Within(0.0001f));
+        }
+
+        [Test]
+        public void TimedPlatform_EvaluatesTelegraphedCycle() {
+            Assert.That(
+                PCGTimedPlatform.EvaluateState(1f, 2.5f, 0.8f, 1.4f),
+                Is.EqualTo(TimedPlatformState.Visible));
+            Assert.That(
+                PCGTimedPlatform.EvaluateState(2.7f, 2.5f, 0.8f, 1.4f),
+                Is.EqualTo(TimedPlatformState.Warning));
+            Assert.That(
+                PCGTimedPlatform.EvaluateState(4f, 2.5f, 0.8f, 1.4f),
+                Is.EqualTo(TimedPlatformState.Hidden));
+            Assert.That(
+                PCGTimedPlatform.EvaluateState(4.8f, 2.5f, 0.8f, 1.4f),
+                Is.EqualTo(TimedPlatformState.Visible));
+        }
+
+        [Test]
+        public void Telemetry_UsesBoundedEventBufferAndExportsJson() {
+            var telemetryObject = new GameObject("Telemetry");
+            cleanup.Add(telemetryObject);
+            var telemetry = telemetryObject.AddComponent<PCGRunTelemetry>();
+
+            for (var i = 0; i < 300; i++)
+                telemetry.Record(
+                    PCGTelemetryEventType.CheckpointReached,
+                    i,
+                    new Vector3(0f, 0f, i));
+
+            Assert.That(telemetry.Events, Has.Count.EqualTo(256));
+            Assert.That(telemetry.Events[0].chunkIndex, Is.EqualTo(44));
+            Assert.That(telemetry.ToJson(), Does.Contain("\"events\""));
+        }
+
+        [Test]
         public void Manifest_RoundTripsThroughJson() {
             var manifest = new GeneratedLevelManifest {
                 seed = 123,
@@ -203,7 +306,7 @@ namespace Platformer.PCG.Tests {
         }
 
         [Test]
-        public void GeneratedLibrary_CreatesTwelveDeterministicChunksWithoutLockedAbilities() {
+        public void GeneratedLibrary_CreatesSixteenDeterministicChunksWithoutLockedAbilities() {
             var config = AssetDatabase.LoadAssetAtPath<LevelGenerationConfig>(
                 "Assets/_Project/PCG/LevelGenerationConfig.asset");
             Assert.That(config, Is.Not.Null, "Run Platformer/PCG/Create First Batch before this integration test.");
@@ -221,9 +324,24 @@ namespace Platformer.PCG.Tests {
             generator.Generate();
 
             Assert.That(generator.LastManifest.completed, Is.True, generator.LastManifest.failureReason);
-            Assert.That(generator.LastManifest.chunks, Has.Count.EqualTo(12));
+            Assert.That(generator.LastManifest.chunks, Has.Count.EqualTo(16));
             Assert.That(generator.LastManifest.chunks.Exists(record =>
                 record.chunkId == "dash_gap_01" || record.chunkId == "double_jump_01"), Is.False);
+
+            var firstPosition = generator.LastManifest.chunks[0].position;
+            var hasLateralVariation = false;
+            var hasElevationVariation = false;
+            var hasHeadingVariation = false;
+            foreach (var record in generator.LastManifest.chunks) {
+                hasLateralVariation |= Mathf.Abs(record.position.x - firstPosition.x) > 0.1f;
+                hasElevationVariation |= Mathf.Abs(record.position.y - firstPosition.y) > 0.1f;
+                hasHeadingVariation |= Mathf.Abs(Mathf.DeltaAngle(
+                    record.rotation.eulerAngles.y,
+                    generator.LastManifest.chunks[0].rotation.eulerAngles.y)) > 1f;
+            }
+            Assert.That(hasLateralVariation, Is.True);
+            Assert.That(hasElevationVariation, Is.True);
+            Assert.That(hasHeadingVariation, Is.True);
 
             var firstManifest = generator.LastManifest.ToJson();
             generator.Generate();
@@ -238,7 +356,10 @@ namespace Platformer.PCG.Tests {
             ChunkCategory category = ChunkCategory.Basic,
             int minimumProgress = 0,
             float horizontalReach = 0f,
-            float verticalReach = 0f) {
+            float verticalReach = 0f,
+            float elevationDelta = 0f,
+            float headingDelta = 0f,
+            float lateralDelta = 0f) {
             var chunk = CreateChunkObject(id, Vector3.zero, Vector3.one);
             var data = ScriptableObject.CreateInstance<PlatformChunkData>();
             cleanup.Add(data);
@@ -253,7 +374,10 @@ namespace Platformer.PCG.Tests {
                 1f,
                 minimumProgress,
                 horizontalReach,
-                verticalReach);
+                verticalReach,
+                elevationDelta,
+                headingDelta,
+                lateralDelta);
             return data;
         }
 

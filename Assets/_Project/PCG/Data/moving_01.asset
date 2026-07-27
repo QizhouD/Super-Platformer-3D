@@ -22,7 +22,10 @@ MonoBehaviour:
   explorationScore: 0
   weight: 1
   minimumProgress: 0
-  requiredHorizontalReach: 2.5
+  requiredHorizontalReach: 3.125
   requiredVerticalReach: 0.4
+  elevationDelta: 0
+  headingDelta: 0
+  lateralDelta: 0
   allowRotation: 0
   tags: []

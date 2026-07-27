@@ -24,5 +24,8 @@ MonoBehaviour:
   minimumProgress: 0
   requiredHorizontalReach: 0
   requiredVerticalReach: 0
+  elevationDelta: 0
+  headingDelta: 0
+  lateralDelta: 0
   allowRotation: 0
   tags: []

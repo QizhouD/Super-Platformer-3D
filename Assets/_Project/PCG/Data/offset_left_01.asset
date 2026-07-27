@@ -10,22 +10,22 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cfb2f27374d18054f8189c74a252eebf, type: 3}
-  m_Name: basic_01
+  m_Name: offset_left_01
   m_EditorClassIdentifier: 
-  chunkId: basic_01
-  prefab: {fileID: 7062278362201813347, guid: 80694f9f1e937724b94233b4d5998933, type: 3}
-  category: 0
+  chunkId: offset_left_01
+  prefab: {fileID: 411284229390841330, guid: af3d0742ad689274bb4b7269d04df6de, type: 3}
+  category: 5
   requiredAbility: 0
-  traversalDifficulty: 0.12
+  traversalDifficulty: 0.36
   combatDifficulty: 0
-  precisionDifficulty: 0.1
+  precisionDifficulty: 0.4
   explorationScore: 0
   weight: 1
   minimumProgress: 0
-  requiredHorizontalReach: 0
-  requiredVerticalReach: 0
+  requiredHorizontalReach: 3.125
+  requiredVerticalReach: 0.4
   elevationDelta: 0
   headingDelta: 0
-  lateralDelta: 0
+  lateralDelta: -4.375
   allowRotation: 0
   tags: []
