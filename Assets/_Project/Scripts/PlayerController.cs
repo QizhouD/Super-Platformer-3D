@@ -273,5 +273,11 @@ namespace Platformer {
             Debug.Log("Dash ability unlocked！");
         }
 
+        public void SetTraversalAbilities(bool doubleJumpEnabled, bool dashEnabled) {
+            allowDoubleJump = doubleJumpEnabled;
+            allowDash = dashEnabled;
+            if (!allowDoubleJump) hasDoubleJump = false;
+        }
+
     }
 }

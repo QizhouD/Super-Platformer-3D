@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfb2f27374d18054f8189c74a252eebf, type: 3}
+  m_Name: dash_gap_01
+  m_EditorClassIdentifier: 
+  chunkId: dash_gap_01
+  prefab: {fileID: 5394350507525802241, guid: 12491a5ddc6cf4a4baa173072197ef40, type: 3}
+  category: 3
+  requiredAbility: 2
+  traversalDifficulty: 0.78
+  combatDifficulty: 0
+  precisionDifficulty: 0.72
+  explorationScore: 0
+  weight: 1
+  minimumProgress: 5
+  requiredHorizontalReach: 8
+  requiredVerticalReach: 0
+  allowRotation: 0
+  tags: []

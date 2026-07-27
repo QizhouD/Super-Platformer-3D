@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b953f7af8a322f419c241d2071b7de0, type: 3}
+  m_Name: LevelGenerationConfig
+  m_EditorClassIdentifier: 
+  chunks:
+  - {fileID: 11400000, guid: ee1b627c522f3d54b8679d964620aff6, type: 2}
+  - {fileID: 11400000, guid: 8cb188a689145fe4a9d9025afc57f984, type: 2}
+  - {fileID: 11400000, guid: fb686ee24da6f284d8c95a7728a126ce, type: 2}
+  - {fileID: 11400000, guid: 2f7ffcda7b423eb4896abe73e59d6c23, type: 2}
+  - {fileID: 11400000, guid: d05ef38d34253134d8a7756d36e5a876, type: 2}
+  - {fileID: 11400000, guid: 589bbd575f203c543a733f3c69bcc7f3, type: 2}
+  - {fileID: 11400000, guid: 819b0fd08c68ffa4781d8f080cdf4f48, type: 2}
+  - {fileID: 11400000, guid: 801cab684234bec4c92816e4147ccc2d, type: 2}
+  initialChunkCount: 12
+  chunksAhead: 4
+  maximumGenerationAttempts: 20
+  difficultyByProgress:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.15
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0.7
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  checkpointInterval: 5
+  recoveryChunkCooldown: 3
+  overlapPadding: 0.08
+  maximumConsecutiveCategory: 2
