@@ -24,6 +24,7 @@ namespace Platformer.PCG {
             new PCGGameAIObservation();
         public RenderTexture LatestVisualFrame { get; private set; }
         public event Action<PCGGameAIObservation> ObservationReady;
+        public event Action<int, RenderTexture> VisualFrameReady;
 
         void Awake() {
             ResolveReferences();
@@ -110,6 +111,11 @@ namespace Platformer.PCG {
         public string LatestObservationToJson(bool prettyPrint = true) =>
             JsonUtility.ToJson(LatestObservation, prettyPrint);
 
+        public RenderTexture GetOrCreateVisualFrame() {
+            EnsureVisualTarget();
+            return LatestVisualFrame;
+        }
+
         void CaptureVisualFrame() {
             EnsureVisualTarget();
             if (LatestVisualFrame == null) return;
@@ -119,6 +125,7 @@ namespace Platformer.PCG {
                 observationCamera.targetTexture = LatestVisualFrame;
                 observationCamera.Render();
                 visualFrameSequence++;
+                VisualFrameReady?.Invoke(visualFrameSequence, LatestVisualFrame);
             } finally {
                 observationCamera.targetTexture = previousTarget;
             }

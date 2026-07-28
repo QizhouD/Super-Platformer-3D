@@ -283,6 +283,104 @@ namespace Platformer.PCG.Tests {
         }
 
         [Test]
+        public void DatasetRecorder_ClassifiesMovementStates() {
+            Assert.That(
+                PCGMultimodalDatasetRecorder.ClassifyBehavior(Vector3.zero, false),
+                Is.EqualTo(PCGBehaviorLabel.Idle));
+            Assert.That(
+                PCGMultimodalDatasetRecorder.ClassifyBehavior(
+                    new Vector3(2f, 0f, 1f),
+                    false),
+                Is.EqualTo(PCGBehaviorLabel.Traversing));
+            Assert.That(
+                PCGMultimodalDatasetRecorder.ClassifyBehavior(
+                    new Vector3(0f, -3f, 0f),
+                    false),
+                Is.EqualTo(PCGBehaviorLabel.Falling));
+            Assert.That(
+                PCGMultimodalDatasetRecorder.ClassifyBehavior(Vector3.zero, true),
+                Is.EqualTo(PCGBehaviorLabel.Recovery));
+        }
+
+        [Test]
+        public void DatasetRecorder_RewardCombinesProgressAndResetPenalty() {
+            Assert.That(
+                PCGMultimodalDatasetRecorder.CalculateReward(0.25f, 0.5f, 0),
+                Is.EqualTo(2.5f).Within(0.0001f));
+            Assert.That(
+                PCGMultimodalDatasetRecorder.CalculateReward(0.5f, 0.5f, 2),
+                Is.EqualTo(-2f).Within(0.0001f));
+        }
+
+        [Test]
+        public void DatasetEpisodeSummary_ExportsTrainingMetadata() {
+            var summary = new PCGDatasetEpisodeSummary {
+                episodeId = "episode_test_seed_42",
+                seed = 42,
+                sampleCount = 20,
+                visualFrameCount = 8,
+                completed = true,
+                episodeReturn = 10f
+            };
+
+            var json = summary.ToJson();
+
+            Assert.That(json, Does.Contain("\"schemaVersion\": \"1.0\""));
+            Assert.That(json, Does.Contain("\"sampleCount\": 20"));
+            Assert.That(json, Does.Contain("\"completed\": true"));
+        }
+
+        [Test]
+        public void NavigationObservationEncoder_ProducesNormalizedTwentyValueVector() {
+            var values = PCGNavigationObservationEncoder.Build(
+                Vector3.zero,
+                new Vector3(20f, -3f, -20f),
+                Vector3.forward,
+                Vector3.right,
+                new Vector3(3f, 4f, 0f),
+                0.5f,
+                20,
+                0.6f,
+                0.7f,
+                0.1f,
+                1f,
+                12,
+                16,
+                8);
+
+            Assert.That(
+                values,
+                Has.Length.EqualTo(PCGNavigationObservationEncoder.ObservationSize));
+            foreach (var value in values)
+                Assert.That(value, Is.InRange(-1f, 1f));
+            Assert.That(values[3], Is.EqualTo(5f / 30f).Within(0.0001f));
+            Assert.That(values[19], Is.EqualTo(1f));
+        }
+
+        [Test]
+        public void NavigationObservationEncoder_EncodesTargetDirection() {
+            var values = PCGNavigationObservationEncoder.Build(
+                Vector3.zero,
+                Vector3.zero,
+                Vector3.forward,
+                Vector3.forward,
+                new Vector3(10f, 0f, 0f),
+                0f,
+                0,
+                0f,
+                0.5f,
+                0f,
+                1f,
+                0,
+                16,
+                0);
+
+            Assert.That(values[0], Is.EqualTo(1f).Within(0.0001f));
+            Assert.That(values[1], Is.EqualTo(0f).Within(0.0001f));
+            Assert.That(values[2], Is.EqualTo(0f).Within(0.0001f));
+        }
+
+        [Test]
         public void Telemetry_UsesBoundedEventBufferAndExportsJson() {
             var telemetryObject = new GameObject("Telemetry");
             cleanup.Add(telemetryObject);

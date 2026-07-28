@@ -1,0 +1,9 @@
+# Matches com.unity.ml-agents 2.0.1 / communicator API 1.5.
+# Use Python 3.9; ML-Agents 0.30.0 is not compatible with Python 3.12/3.13.
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==1.11.0+cpu
+protobuf==3.20.3
+tensorboard==2.11.2
+six==1.17.0
+mlagents==0.30.0
+mlagents-envs==0.30.0

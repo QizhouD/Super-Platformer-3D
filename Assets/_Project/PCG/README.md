@@ -76,6 +76,40 @@ and applies a `-0.2...+0.2` difficulty bias to the next generated layout. The cu
 skill and bias are visible in the debug panel; adaptive difficulty can be toggled
 during Play Mode.
 
+## Dataset recording
+
+Use `Start Dataset Recording` in the debug panel to create a framework-independent
+multimodal episode under:
+
+`Application.persistentDataPath/PCGDatasets/<episode-id>/`
+
+Each episode contains:
+
+- `observations.jsonl`: 20-value observations, heuristic behavior labels, rewards,
+  episode-relative timestamps, and visual-frame references;
+- `frames/*.png`: synchronized 84x84 RGB observations;
+- `episode.json`: seed, duration, completion, resets, checkpoint progress, return,
+  final skill estimate, and final difficulty bias.
+
+The reward contract grants `10 * progress delta` and subtracts `1` per respawn.
+Behavior labels distinguish idle, traversal, airborne, falling, and post-respawn
+recovery states. This format is suitable for behavior cloning, supervised behavior
+detection, offline reinforcement learning, or conversion to a Python dataset.
+
+## ML-Agents dependency
+
+The project pins `com.unity.ml-agents` to `2.0.1`, the stable package compatible
+with Unity 2022.3. Its matching Python trainer (`mlagents==0.30.0`) is installed in
+the project-local `.venv-mlagents` environment using Python 3.9. Training setup
+instructions live in `Training/README.md`.
+
+`PCGNavigationAgent` uses the existing Player 2 state machine through an external
+`InputReader` channel. Its policy receives 20 normalized navigation values plus the
+84x84 RGB sensor. Actions contain two continuous movement axes and two binary
+branches for jump and dash. Checkpoints, completion, respawns, time, and target
+approach provide the reward signal. Use the debug panel to switch between human
+heuristic control and trainer control.
+
 ## Regenerate assets
 
 Use `Platformer > PCG > Create First Batch`.
@@ -86,7 +120,7 @@ changes is intended.
 
 ## Tests
 
-The `Platformer.PCG.Tests` EditMode assembly currently contains 21 tests covering:
+The `Platformer.PCG.Tests` EditMode assembly currently contains 26 tests covering:
 
 - deterministic random sequences and chunk selection;
 - ability and minimum-progress filtering;
@@ -96,4 +130,6 @@ The `Platformer.PCG.Tests` EditMode assembly currently contains 21 tests coverin
 - manifest serialization and failure reporting;
 - deterministic generation of 16 chunks from the real generated asset library;
 - adaptive difficulty scoring and smoothing;
-- the stable 20-value Game AI observation contract.
+- the stable 20-value Game AI observation contract;
+- behavior labeling, reward calculation, and episode metadata serialization.
+- normalized ML navigation observations and next-target direction encoding.

@@ -16,8 +16,17 @@ namespace Platformer {
         public event UnityAction Pause = delegate { };
 
         PlayerInputActions inputActions;
-        
-        public Vector3 Direction => inputActions.Player.Move.ReadValue<Vector2>();
+        Vector2 externalDirection;
+
+        public bool ExternalControlEnabled { get; private set; }
+        public bool HumanJumpHeld { get; private set; }
+        public bool HumanDashHeld { get; private set; }
+        public Vector2 HumanDirection =>
+            inputActions != null
+                ? inputActions.Player.Move.ReadValue<Vector2>()
+                : Vector2.zero;
+        public Vector3 Direction =>
+            ExternalControlEnabled ? externalDirection : HumanDirection;
 
         void OnEnable() {
             if (inputActions == null) {
@@ -25,9 +34,31 @@ namespace Platformer {
                 inputActions.Player.SetCallbacks(this);
             }
         }
-        
+
         public void EnablePlayerActions() {
             inputActions.Enable();
+        }
+
+        public void SetExternalControlEnabled(bool value) {
+            if (ExternalControlEnabled == value) return;
+            if (ExternalControlEnabled) {
+                Jump.Invoke(false);
+                Dash.Invoke(false);
+            }
+            ExternalControlEnabled = value;
+            externalDirection = Vector2.zero;
+        }
+
+        public void SetExternalDirection(Vector2 direction) {
+            externalDirection = Vector2.ClampMagnitude(direction, 1f);
+        }
+
+        public void SendExternalJump(bool pressed) {
+            if (ExternalControlEnabled) Jump.Invoke(pressed);
+        }
+
+        public void SendExternalDash(bool pressed) {
+            if (ExternalControlEnabled) Dash.Invoke(pressed);
         }
 
         public void OnMove(InputAction.CallbackContext context) {
@@ -38,12 +69,12 @@ namespace Platformer {
             Look.Invoke(context.ReadValue<Vector2>(), IsDeviceMouse(context));
         }
 
-        bool IsDeviceMouse(InputAction.CallbackContext context) => context.control.device.name == "Mouse";
+        bool IsDeviceMouse(InputAction.CallbackContext context) =>
+            context.control.device.name == "Mouse";
 
         public void OnFire(InputAction.CallbackContext context) {
-            if (context.phase == InputActionPhase.Started) {
+            if (context.phase == InputActionPhase.Started && !ExternalControlEnabled)
                 Attack.Invoke();
-            }
         }
 
         public void OnMouseControlCamera(InputAction.CallbackContext context) {
@@ -60,10 +91,12 @@ namespace Platformer {
         public void OnRun(InputAction.CallbackContext context) {
             switch (context.phase) {
                 case InputActionPhase.Started:
-                    Dash.Invoke(true);
+                    HumanDashHeld = true;
+                    if (!ExternalControlEnabled) Dash.Invoke(true);
                     break;
                 case InputActionPhase.Canceled:
-                    Dash.Invoke(false);
+                    HumanDashHeld = false;
+                    if (!ExternalControlEnabled) Dash.Invoke(false);
                     break;
             }
         }
@@ -71,17 +104,18 @@ namespace Platformer {
         public void OnJump(InputAction.CallbackContext context) {
             switch (context.phase) {
                 case InputActionPhase.Started:
-                    Jump.Invoke(true);
+                    HumanJumpHeld = true;
+                    if (!ExternalControlEnabled) Jump.Invoke(true);
                     break;
                 case InputActionPhase.Canceled:
-                    Jump.Invoke(false);
+                    HumanJumpHeld = false;
+                    if (!ExternalControlEnabled) Jump.Invoke(false);
                     break;
             }
         }
+
         public void OnPause(InputAction.CallbackContext context) {
-            if (context.phase == InputActionPhase.Started) {
-                Pause.Invoke();
-            }
+            if (context.phase == InputActionPhase.Started) Pause.Invoke();
         }
     }
 }

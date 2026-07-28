@@ -80,3 +80,7 @@ Assets/NetCodeGenerated*
 RiderScriptEditorPersistedState.asset
 .bezisidekick/
 
+# Local ML-Agents Python environment and training outputs
+/.venv-mlagents/
+/Training/results/
+/Assets/ML-Agents/Timers/

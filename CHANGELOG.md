@@ -4,6 +4,32 @@
 
 ### Added
 
+- Added the first trainable `PCGNavigationAgent`:
+  - 20 normalized navigation observations plus the 84x84 RGB sensor;
+  - continuous movement and discrete jump/dash actions;
+  - checkpoint, completion, death, time, and target-approach rewards;
+  - human heuristic and external trainer control modes.
+- Added an external-control channel to `InputReader` so ML actions reuse Player 2's
+  existing movement, jump, dash, and state-machine implementation.
+- Added `Training/pcg_navigation_ppo.yaml` and Lab training-mode controls.
+- Added two EditMode tests for normalized navigation observations and target encoding.
+- Installed the Unity ML-Agents training stack compatible with Unity 2022.3:
+  - `com.unity.ml-agents 2.0.1`;
+  - project-local Python 3.9 virtual environment;
+  - `mlagents` / `mlagents-envs 0.30.0`;
+  - PyTorch `1.11.0+cpu`;
+  - compatibility-pinned Protobuf `3.20.3` and TensorBoard `2.11.2`.
+- Added reproducible trainer requirements and setup notes under `Training/`.
+- Added the `Unity.ML-Agents` reference to the PCG runtime assembly.
+- Added `PCGMultimodalDatasetRecorder` for training-data collection:
+  - JSONL structured observations and reward signals;
+  - synchronized 84x84 PNG frames;
+  - idle, traversal, airborne, falling, and recovery behavior labels;
+  - episode summaries containing seed, completion, resets, return, and final
+    adaptive difficulty state.
+- Added dataset recording controls and output-path access to the PCG debug panel.
+- Added three EditMode tests for behavior labeling, reward shaping, and episode
+  metadata serialization.
 - Added a multimodal Game AI observation layer:
   - fixed 20-value structured state vectors at 5 Hz;
   - independent 84x84 RGB observations at 2 Hz;
@@ -60,7 +86,7 @@
 
 ### Validation
 
-- EditMode tests: **21 passed, 0 failed**.
+- EditMode tests: **26 passed, 0 failed**.
 - Default seed: `82431`.
 - Runtime generation: **16 chunks and 16 checkpoints**.
 - Multimodal observation smoke test:
@@ -69,6 +95,18 @@
   - initial skill/bias: `0.500 / 0.000`;
   - fast clean sample: skill `0.625`, bias `+0.050`;
   - first target difficulty changed from `0.150` to `0.200`.
+- Dataset recording smoke test:
+  - `120` structured JSONL samples;
+  - `48` synchronized PNG frames;
+  - episode summary written successfully;
+  - no Play Mode runtime errors.
+- ML-Agents navigation smoke test:
+  - behavior: `PCGNavigation`;
+  - observations: `20` normalized values plus an allocated `84x84` RGB sensor;
+  - actions: `2` continuous axes plus `2` binary branches;
+  - decision period: `5`;
+  - training toggle switches `HeuristicOnly -> Default -> HeuristicOnly`;
+  - PPO configuration parsed successfully by ML-Agents `0.30.0`.
 - Measured layout:
   - X range: approximately `61.9m`
   - Z range: approximately `48.1m`
@@ -80,13 +118,13 @@
 ### Suggested commit
 
 ```text
-feat(game-ai): add multimodal observations and adaptive pcg difficulty
+feat(ml-agents): add trainable pcg navigation agent
 
-- add 20-value structured and 84x84 visual observations
-- estimate player skill from checkpoint pace and respawns
-- adapt dynamic-platform timing and future PCG difficulty
-- expose Game AI state and observation export in the lab panel
-- extend EditMode coverage to 21 passing tests
+- add Player 2 external input bridge for policy control
+- add vector and visual observations with hybrid actions
+- add checkpoint, completion, death and approach rewards
+- add human/training mode toggle and PPO configuration
+- extend EditMode coverage to 26 passing tests
 ```
 
 ### Commit scope note

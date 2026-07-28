@@ -9,12 +9,18 @@ namespace Platformer.PCG {
         [SerializeField] PCGRunTelemetry telemetry;
         [SerializeField] PCGAdaptiveDifficultyDirector difficultyDirector;
         [SerializeField] PCGGameAIObservationSensor observationSensor;
+        [SerializeField] PCGMultimodalDatasetRecorder datasetRecorder;
+        [SerializeField] MonoBehaviour trainingControllerBehaviour;
 
         string seedText = "82431";
         bool doubleJump;
         bool dash;
         bool adaptiveDifficulty = true;
+        bool trainingMode;
         Vector2 manifestScroll;
+
+        IPCGTrainingController TrainingController =>
+            trainingControllerBehaviour as IPCGTrainingController;
 
         void Awake() {
             if (generator == null) generator = FindObjectOfType<LevelGenerator>();
@@ -27,13 +33,18 @@ namespace Platformer.PCG {
             PCGRunController labRunController = null,
             PCGRunTelemetry runTelemetry = null,
             PCGAdaptiveDifficultyDirector adaptiveDirector = null,
-            PCGGameAIObservationSensor gameAIObservationSensor = null) {
+            PCGGameAIObservationSensor gameAIObservationSensor = null,
+            PCGMultimodalDatasetRecorder multimodalDatasetRecorder = null,
+            MonoBehaviour mlTrainingController = null) {
             generator = levelGenerator;
             player = labPlayer;
             runController = labRunController;
             telemetry = runTelemetry;
             difficultyDirector = adaptiveDirector;
             observationSensor = gameAIObservationSensor;
+            datasetRecorder = multimodalDatasetRecorder;
+            trainingControllerBehaviour = mlTrainingController;
+            trainingMode = TrainingController != null && TrainingController.TrainingMode;
             if (generator != null) seedText = generator.Seed.ToString();
         }
 
@@ -56,6 +67,17 @@ namespace Platformer.PCG {
                     $"Observation: {PCGGameAIObservation.VectorSize}D + " +
                     $"{PCGGameAIObservationSensor.VisualWidth}x" +
                     $"{PCGGameAIObservationSensor.VisualHeight} RGB");
+            if (datasetRecorder != null)
+                GUILayout.Label(datasetRecorder.IsRecording
+                    ? "Dataset: RECORDING"
+                    : datasetRecorder.LastSummary != null
+                        ? $"Dataset: {datasetRecorder.LastSummary.sampleCount} samples saved"
+                        : "Dataset: ready");
+            if (TrainingController != null)
+                GUILayout.Label(
+                    $"ML Episodes: {TrainingController.CompletedEpisodes} completed / " +
+                    $"{TrainingController.FailedEpisodes} failed   " +
+                    $"Reward: {TrainingController.LastEpisodeReward:F2}");
 
             GUILayout.BeginHorizontal();
             GUILayout.Label("Seed", GUILayout.Width(55f));
@@ -78,6 +100,16 @@ namespace Platformer.PCG {
             }
             GUILayout.EndHorizontal();
 
+            if (TrainingController != null) {
+                var nextTrainingMode = GUILayout.Toggle(
+                    trainingMode,
+                    "ML-Agents Training Mode");
+                if (nextTrainingMode != trainingMode) {
+                    trainingMode = nextTrainingMode;
+                    TrainingController.SetTrainingMode(trainingMode);
+                }
+            }
+
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("Random Seed")) {
                 seedText = Environment.TickCount.ToString();
@@ -93,6 +125,21 @@ namespace Platformer.PCG {
             if (observationSensor != null &&
                 GUILayout.Button("Copy Latest Game AI Observation"))
                 GUIUtility.systemCopyBuffer = observationSensor.LatestObservationToJson();
+
+            if (datasetRecorder != null) {
+                GUILayout.BeginHorizontal();
+                GUI.enabled = !datasetRecorder.IsRecording;
+                if (GUILayout.Button("Start Dataset Recording"))
+                    datasetRecorder.StartRecording();
+                GUI.enabled = datasetRecorder.IsRecording;
+                if (GUILayout.Button("Stop Recording"))
+                    datasetRecorder.StopRecording(false);
+                GUI.enabled = true;
+                GUILayout.EndHorizontal();
+                if (!string.IsNullOrEmpty(datasetRecorder.CurrentEpisodeDirectory) &&
+                    GUILayout.Button("Copy Dataset Path"))
+                    GUIUtility.systemCopyBuffer = datasetRecorder.CurrentEpisodeDirectory;
+            }
 
             var manifest = generator.LastManifest;
             if (manifest != null) {

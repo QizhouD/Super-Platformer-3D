@@ -8,6 +8,8 @@ namespace Platformer.PCG {
         [SerializeField] float fallThreshold = -12f;
 
         Rigidbody playerBody;
+        Vector3 initialSpawnPosition;
+        Quaternion initialSpawnRotation;
         Vector3 respawnPosition;
         Quaternion respawnRotation;
 
@@ -23,12 +25,14 @@ namespace Platformer.PCG {
             }
             if (player != null) playerBody = player.GetComponent<Rigidbody>();
             if (initialSpawn != null) {
-                respawnPosition = initialSpawn.position;
-                respawnRotation = initialSpawn.rotation;
+                initialSpawnPosition = initialSpawn.position;
+                initialSpawnRotation = initialSpawn.rotation;
             } else if (player != null) {
-                respawnPosition = player.position;
-                respawnRotation = player.rotation;
+                initialSpawnPosition = player.position;
+                initialSpawnRotation = player.rotation;
             }
+            respawnPosition = initialSpawnPosition;
+            respawnRotation = initialSpawnRotation;
         }
 
         void OnEnable() {
@@ -47,20 +51,39 @@ namespace Platformer.PCG {
             player = labPlayer;
             initialSpawn = spawn;
             playerBody = player != null ? player.GetComponent<Rigidbody>() : null;
+            if (initialSpawn != null) {
+                initialSpawnPosition = initialSpawn.position;
+                initialSpawnRotation = initialSpawn.rotation;
+                respawnPosition = initialSpawnPosition;
+                respawnRotation = initialSpawnRotation;
+            }
+        }
+
+        public void RestartRun(bool resetCounters = true) {
+            FurthestCheckpoint = -1;
+            if (resetCounters) ResetCount = 0;
+            respawnPosition = initialSpawnPosition;
+            respawnRotation = initialSpawnRotation;
+            TeleportPlayer(initialSpawnPosition, initialSpawnRotation);
         }
 
         public void Respawn() {
             if (player == null) return;
             ResetCount++;
+            TeleportPlayer(respawnPosition, respawnRotation);
+            PlayerRespawned?.Invoke(ResetCount, respawnPosition);
+        }
+
+        void TeleportPlayer(Vector3 position, Quaternion rotation) {
+            if (player == null) return;
             if (playerBody != null) {
                 playerBody.velocity = Vector3.zero;
                 playerBody.angularVelocity = Vector3.zero;
-                playerBody.position = respawnPosition;
-                playerBody.rotation = respawnRotation;
+                playerBody.position = position;
+                playerBody.rotation = rotation;
             } else {
-                player.SetPositionAndRotation(respawnPosition, respawnRotation);
+                player.SetPositionAndRotation(position, rotation);
             }
-            PlayerRespawned?.Invoke(ResetCount, respawnPosition);
         }
 
         void HandleCheckpointReached(int chunkIndex, Vector3 position) {

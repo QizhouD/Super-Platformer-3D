@@ -8,6 +8,10 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Unity.MLAgents;
+using Unity.MLAgents.Actuators;
+using Unity.MLAgents.Policies;
+using Unity.MLAgents.Sensors;
 
 public static class PCGProjectBootstrap {
     const string Root = "Assets/_Project/PCG";
@@ -17,7 +21,7 @@ public static class PCGProjectBootstrap {
     const string PlayerPrefabPath = "Assets/_Project/Prefabs/Player 2.prefab";
     const string InputReaderPath = "Assets/_Project/ScriptableObjects/InputReader.asset";
     const string ScenePath = "Assets/_Project/Scenes/PCG_Lab.unity";
-    const int BootstrapVersion = 10;
+    const int BootstrapVersion = 12;
     const float LabCameraSensitivity = 2f;
     const float HorizontalLayoutScale = 1.25f;
     const float PlatformFootprintScale = 1.05f;
@@ -320,6 +324,36 @@ public static class PCGProjectBootstrap {
             playerObject.transform,
             observationCamera,
             difficultyDirector);
+        var behaviorParameters = playerObject.AddComponent<BehaviorParameters>();
+        behaviorParameters.BehaviorName = PCGNavigationAgent.BehaviorName;
+        behaviorParameters.BehaviorType = BehaviorType.HeuristicOnly;
+        behaviorParameters.BrainParameters.VectorObservationSize =
+            PCGNavigationObservationEncoder.ObservationSize;
+        behaviorParameters.BrainParameters.NumStackedVectorObservations = 1;
+        behaviorParameters.BrainParameters.ActionSpec =
+            new ActionSpec(2, new[] { 2, 2 });
+        var visualSensor = playerObject.AddComponent<RenderTextureSensorComponent>();
+        visualSensor.SensorName = "PCGVisualObservation";
+        visualSensor.Grayscale = false;
+        visualSensor.CompressionType = SensorCompressionType.PNG;
+        visualSensor.ObservationStacks = 1;
+        var navigationAgent = playerObject.AddComponent<PCGNavigationAgent>();
+        navigationAgent.Configure(
+            inputReader,
+            generator,
+            runController,
+            observationSensor,
+            observationCamera);
+        var decisionRequester = playerObject.AddComponent<DecisionRequester>();
+        decisionRequester.DecisionPeriod = 5;
+        decisionRequester.TakeActionsBetweenDecisions = true;
+        var datasetRecorder = system.AddComponent<PCGMultimodalDatasetRecorder>();
+        datasetRecorder.Configure(
+            generator,
+            runController,
+            observationSensor,
+            difficultyDirector,
+            telemetry);
         var panel = system.AddComponent<PCGDebugPanel>();
         panel.Configure(
             generator,
@@ -327,7 +361,9 @@ public static class PCGProjectBootstrap {
             runController,
             telemetry,
             difficultyDirector,
-            observationSensor);
+            observationSensor,
+            datasetRecorder,
+            navigationAgent);
 
         EditorSceneManager.SaveScene(scene, ScenePath);
         AddSceneToBuildSettings(ScenePath);
