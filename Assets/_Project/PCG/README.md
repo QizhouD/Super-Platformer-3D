@@ -61,6 +61,21 @@ respawns, and timed-platform state changes. It also maintains a lightweight play
 position/velocity snapshot for future Game AI observation. Use `Copy Telemetry` in
 the debug panel to export the current run as JSON.
 
+## Multimodal Game AI
+
+`PCGGameAIObservationSensor` produces a fixed 20-value structured observation at
+5 Hz and a separate 84x84 RGB frame at 2 Hz. The structured channel contains player
+pose and velocity, camera direction, progress, resets, upcoming chunk difficulty,
+dynamic-platform state, and the current adaptive difficulty estimate. This contract
+can be consumed by ML-Agents, an ONNX policy, or an external inference service
+without coupling those systems to the generator internals.
+
+`PCGAdaptiveDifficultyDirector` estimates player skill from checkpoint time and
+respawns. It immediately changes moving-platform speed and timed-platform windows,
+and applies a `-0.2...+0.2` difficulty bias to the next generated layout. The current
+skill and bias are visible in the debug panel; adaptive difficulty can be toggled
+during Play Mode.
+
 ## Regenerate assets
 
 Use `Platformer > PCG > Create First Batch`.
@@ -71,7 +86,7 @@ changes is intended.
 
 ## Tests
 
-The `Platformer.PCG.Tests` EditMode assembly currently contains 13 tests covering:
+The `Platformer.PCG.Tests` EditMode assembly currently contains 21 tests covering:
 
 - deterministic random sequences and chunk selection;
 - ability and minimum-progress filtering;
@@ -79,4 +94,6 @@ The `Platformer.PCG.Tests` EditMode assembly currently contains 13 tests coverin
 - category repetition limits;
 - overlap validation;
 - manifest serialization and failure reporting;
-- deterministic generation of 12 chunks from the real generated asset library.
+- deterministic generation of 16 chunks from the real generated asset library;
+- adaptive difficulty scoring and smoothing;
+- the stable 20-value Game AI observation contract.

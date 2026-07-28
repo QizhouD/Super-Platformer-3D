@@ -7,10 +7,13 @@ namespace Platformer.PCG {
         [SerializeField] GameObject player;
         [SerializeField] PCGRunController runController;
         [SerializeField] PCGRunTelemetry telemetry;
+        [SerializeField] PCGAdaptiveDifficultyDirector difficultyDirector;
+        [SerializeField] PCGGameAIObservationSensor observationSensor;
 
         string seedText = "82431";
         bool doubleJump;
         bool dash;
+        bool adaptiveDifficulty = true;
         Vector2 manifestScroll;
 
         void Awake() {
@@ -22,11 +25,15 @@ namespace Platformer.PCG {
             LevelGenerator levelGenerator,
             GameObject labPlayer = null,
             PCGRunController labRunController = null,
-            PCGRunTelemetry runTelemetry = null) {
+            PCGRunTelemetry runTelemetry = null,
+            PCGAdaptiveDifficultyDirector adaptiveDirector = null,
+            PCGGameAIObservationSensor gameAIObservationSensor = null) {
             generator = levelGenerator;
             player = labPlayer;
             runController = labRunController;
             telemetry = runTelemetry;
+            difficultyDirector = adaptiveDirector;
+            observationSensor = gameAIObservationSensor;
             if (generator != null) seedText = generator.Seed.ToString();
         }
 
@@ -40,6 +47,15 @@ namespace Platformer.PCG {
                 GUILayout.Label($"Checkpoint: {runController.FurthestCheckpoint + 1}   Resets: {runController.ResetCount}");
             if (telemetry != null)
                 GUILayout.Label($"Telemetry events: {telemetry.Events.Count}");
+            if (difficultyDirector != null)
+                GUILayout.Label(
+                    $"Game AI skill: {difficultyDirector.SkillEstimate:F2}   " +
+                    $"PCG bias: {difficultyDirector.DifficultyBias:+0.00;-0.00;0.00}");
+            if (observationSensor != null)
+                GUILayout.Label(
+                    $"Observation: {PCGGameAIObservation.VectorSize}D + " +
+                    $"{PCGGameAIObservationSensor.VisualWidth}x" +
+                    $"{PCGGameAIObservationSensor.VisualHeight} RGB");
 
             GUILayout.BeginHorizontal();
             GUILayout.Label("Seed", GUILayout.Width(55f));
@@ -53,6 +69,16 @@ namespace Platformer.PCG {
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
+            var nextAdaptiveDifficulty = GUILayout.Toggle(
+                adaptiveDifficulty,
+                "Adaptive Difficulty");
+            if (nextAdaptiveDifficulty != adaptiveDifficulty) {
+                adaptiveDifficulty = nextAdaptiveDifficulty;
+                difficultyDirector?.SetAdaptiveDifficultyEnabled(adaptiveDifficulty);
+            }
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
             if (GUILayout.Button("Random Seed")) {
                 seedText = Environment.TickCount.ToString();
                 Generate();
@@ -63,6 +89,10 @@ namespace Platformer.PCG {
             if (GUILayout.Button("Copy Telemetry") && telemetry != null)
                 GUIUtility.systemCopyBuffer = telemetry.ToJson();
             GUILayout.EndHorizontal();
+
+            if (observationSensor != null &&
+                GUILayout.Button("Copy Latest Game AI Observation"))
+                GUIUtility.systemCopyBuffer = observationSensor.LatestObservationToJson();
 
             var manifest = generator.LastManifest;
             if (manifest != null) {

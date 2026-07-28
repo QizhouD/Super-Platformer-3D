@@ -53,6 +53,13 @@ namespace Platformer.PCG {
             phaseOffset = Mathf.Max(0f, offset);
         }
 
+        public void ApplyDifficulty(float normalizedDifficulty) {
+            var difficulty = Mathf.Clamp01(normalizedDifficulty);
+            visibleDuration = Mathf.Lerp(4f, 2f, difficulty);
+            warningDuration = Mathf.Lerp(1.2f, 0.5f, difficulty);
+            hiddenDuration = Mathf.Lerp(0.8f, 1.8f, difficulty);
+        }
+
         public static TimedPlatformState EvaluateState(
             float time,
             float visible,

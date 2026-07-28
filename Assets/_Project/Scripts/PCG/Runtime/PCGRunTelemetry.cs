@@ -7,7 +7,8 @@ namespace Platformer.PCG {
         GenerationFinished,
         CheckpointReached,
         PlayerRespawned,
-        TimedPlatformStateChanged
+        TimedPlatformStateChanged,
+        DifficultyAdjusted
     }
 
     [Serializable]

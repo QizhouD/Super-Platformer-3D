@@ -17,7 +17,7 @@ public static class PCGProjectBootstrap {
     const string PlayerPrefabPath = "Assets/_Project/Prefabs/Player 2.prefab";
     const string InputReaderPath = "Assets/_Project/ScriptableObjects/InputReader.asset";
     const string ScenePath = "Assets/_Project/Scenes/PCG_Lab.unity";
-    const int BootstrapVersion = 8;
+    const int BootstrapVersion = 10;
     const float LabCameraSensitivity = 2f;
     const float HorizontalLayoutScale = 1.25f;
     const float PlatformFootprintScale = 1.05f;
@@ -309,8 +309,25 @@ public static class PCGProjectBootstrap {
         runController.Configure(playerObject.transform, spawn);
         var telemetry = system.AddComponent<PCGRunTelemetry>();
         telemetry.Configure(generator, runController, playerObject.transform);
+        var difficultyDirector = system.AddComponent<PCGAdaptiveDifficultyDirector>();
+        difficultyDirector.Configure(generator, runController, telemetry);
+        var observationSensor = system.AddComponent<PCGGameAIObservationSensor>();
+        var observationCamera = GameObject.Find("CameraSystem/Main Camera")
+            ?.GetComponent<Camera>();
+        observationSensor.Configure(
+            generator,
+            runController,
+            playerObject.transform,
+            observationCamera,
+            difficultyDirector);
         var panel = system.AddComponent<PCGDebugPanel>();
-        panel.Configure(generator, playerObject, runController, telemetry);
+        panel.Configure(
+            generator,
+            playerObject,
+            runController,
+            telemetry,
+            difficultyDirector,
+            observationSensor);
 
         EditorSceneManager.SaveScene(scene, ScenePath);
         AddSceneToBuildSettings(ScenePath);

@@ -4,6 +4,16 @@
 
 ### Added
 
+- Added a multimodal Game AI observation layer:
+  - fixed 20-value structured state vectors at 5 Hz;
+  - independent 84x84 RGB observations at 2 Hz;
+  - JSON export of the latest structured observation.
+- Added `PCGAdaptiveDifficultyDirector`, which estimates skill from checkpoint time
+  and respawns, then adapts platform timing and future PCG target difficulty.
+- Added telemetry events for adaptive difficulty decisions and live skill/bias
+  readouts to the PCG debug panel.
+- Added three EditMode tests for performance scoring, model smoothing, and observation
+  vector stability.
 - Added deterministic runtime behaviours for generated content:
   - `PCGOscillatingPlatform` for moving-platform challenges.
   - `PCGTimedPlatform` with visible, warning, hidden, and recovery phases.
@@ -50,9 +60,15 @@
 
 ### Validation
 
-- EditMode tests: **18 passed, 0 failed**.
+- EditMode tests: **21 passed, 0 failed**.
 - Default seed: `82431`.
 - Runtime generation: **16 chunks and 16 checkpoints**.
+- Multimodal observation smoke test:
+  - structured vector: `20` values;
+  - visual frame: `84x84`, allocated and updating;
+  - initial skill/bias: `0.500 / 0.000`;
+  - fast clean sample: skill `0.625`, bias `+0.050`;
+  - first target difficulty changed from `0.150` to `0.200`.
 - Measured layout:
   - X range: approximately `61.9m`
   - Z range: approximately `48.1m`
@@ -64,15 +80,13 @@
 ### Suggested commit
 
 ```text
-feat(pcg): expand spatial generation with dynamic platforms and telemetry
+feat(game-ai): add multimodal observations and adaptive pcg difficulty
 
-- add moving and timed platform runtime behaviours
-- add turn, offset, climb and descent chunk archetypes
-- enforce spatial variation and bounded elevation
-- expand layouts to 16 chunks with wider traversal gaps
-- reuse tutorial platform materials
-- export PCG run telemetry for future Game AI observations
-- extend EditMode coverage to 18 passing tests
+- add 20-value structured and 84x84 visual observations
+- estimate player skill from checkpoint pace and respawns
+- adapt dynamic-platform timing and future PCG difficulty
+- expose Game AI state and observation export in the lab panel
+- extend EditMode coverage to 21 passing tests
 ```
 
 ### Commit scope note

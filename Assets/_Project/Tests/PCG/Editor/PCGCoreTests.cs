@@ -238,6 +238,51 @@ namespace Platformer.PCG.Tests {
         }
 
         [Test]
+        public void AdaptiveDifficultyModel_RanksFastCleanRunAboveSlowFailedRun() {
+            var fastClean = PCGAdaptiveDifficultyModel.ScorePerformance(12f, 0);
+            var slowFailed = PCGAdaptiveDifficultyModel.ScorePerformance(40f, 2);
+
+            Assert.That(fastClean, Is.GreaterThan(0.8f));
+            Assert.That(slowFailed, Is.LessThan(0.1f));
+            Assert.That(fastClean, Is.GreaterThan(slowFailed));
+        }
+
+        [Test]
+        public void AdaptiveDifficultyModel_SmoothsPerformanceSamples() {
+            var model = new PCGAdaptiveDifficultyModel(0.5f);
+
+            var updated = model.Update(10f, 0, 0.25f);
+
+            Assert.That(updated, Is.EqualTo(0.625f).Within(0.0001f));
+        }
+
+        [Test]
+        public void GameAIObservation_ProducesStableTwentyValueVector() {
+            var observation = new PCGGameAIObservation {
+                playerPosition = new Vector3(1f, 2f, 3f),
+                playerVelocity = new Vector3(4f, 0f, 0f),
+                cameraForward = Vector3.forward,
+                normalizedProgress = 0.5f,
+                currentChunkIndex = 7,
+                resetCount = 2,
+                nextChunkDifficulty = 0.6f,
+                adaptiveSkill = 0.7f,
+                difficultyBias = 0.08f,
+                timedPlatformVisibleRatio = 1f,
+                movingPlatformCount = 3,
+                visualFrameSequence = 4,
+                timestamp = 12f
+            };
+
+            var vector = observation.ToVector();
+
+            Assert.That(vector, Has.Length.EqualTo(PCGGameAIObservation.VectorSize));
+            Assert.That(vector[0], Is.EqualTo(1f));
+            Assert.That(vector[9], Is.EqualTo(0.5f));
+            Assert.That(vector[18], Is.EqualTo(4f));
+        }
+
+        [Test]
         public void Telemetry_UsesBoundedEventBufferAndExportsJson() {
             var telemetryObject = new GameObject("Telemetry");
             cleanup.Add(telemetryObject);

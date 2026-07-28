@@ -28,6 +28,12 @@ namespace Platformer.PCG {
             endpointPause = Mathf.Max(0f, pause);
         }
 
+        public void ApplyDifficulty(float normalizedDifficulty) {
+            var difficulty = Mathf.Clamp01(normalizedDifficulty);
+            travelDuration = Mathf.Lerp(2.4f, 1.2f, difficulty);
+            endpointPause = Mathf.Lerp(0.7f, 0.15f, difficulty);
+        }
+
         public static float EvaluateNormalizedPosition(float time, float duration, float pause) {
             duration = Mathf.Max(0.1f, duration);
             pause = Mathf.Max(0f, pause);

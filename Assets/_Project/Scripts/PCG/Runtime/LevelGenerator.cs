@@ -11,6 +11,7 @@ namespace Platformer.PCG {
         [SerializeField] int seed = 82431;
         [SerializeField, Min(0)] int chunkCountOverride;
         [SerializeField] bool generateOnStart = true;
+        [SerializeField, Range(-0.5f, 0.5f)] float difficultyBias;
 
         [Header("Spatial grammar")]
         [SerializeField, Range(1, 6)] int maximumConsecutiveFlatChunks = 3;
@@ -35,6 +36,7 @@ namespace Platformer.PCG {
 
         public GeneratedLevelManifest LastManifest { get; private set; }
         public IReadOnlyList<PlatformChunk> SpawnedChunks => spawnedChunks;
+        public float DifficultyBias => difficultyBias;
         public event Action<GeneratedLevelManifest> GenerationFinished;
 
         void Start() {
@@ -75,7 +77,8 @@ namespace Platformer.PCG {
 
             for (var index = 0; index < count; index++) {
                 var placed = false;
-                var targetDifficulty = config.DifficultyAt(index, count);
+                var targetDifficulty = Mathf.Clamp01(
+                    config.DifficultyAt(index, count) + difficultyBias);
 
                 for (var attempt = 0; attempt < config.MaximumGenerationAttempts; attempt++) {
                     var data = selector.Select(
@@ -149,6 +152,10 @@ namespace Platformer.PCG {
 
         public void SetTraversalCapabilities(PlayerTraversalCapabilities capabilities) {
             traversalCapabilities = capabilities;
+        }
+
+        public void SetDifficultyBias(float value) {
+            difficultyBias = Mathf.Clamp(value, -0.5f, 0.5f);
         }
 
         public void Configure(
