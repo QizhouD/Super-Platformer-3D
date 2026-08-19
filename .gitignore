@@ -80,6 +80,9 @@ Assets/NetCodeGenerated*
 RiderScriptEditorPersistedState.asset
 .bezisidekick/
 
+# Local agent permissions and machine-specific settings
+/.claude/settings.local.json
+
 # Local ML-Agents Python environment and training outputs
 /.venv-mlagents/
 /Training/results/
