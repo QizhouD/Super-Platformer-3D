@@ -258,6 +258,14 @@ Assets/
 
 ## 📚 Documentation
 
+Project docs are in [`docs/`](docs/):
+
+- [Architecture / agent guide](docs/agents.md)
+- [PCG Lab](docs/pcg.md)
+- [ML-Agents training](docs/training.md)
+- [Changelog](docs/changelog.md)
+- [Grok handoff](docs/grok-handoff.md)
+
 ### System Guides
 
 - Player Controller: Movement, abilities, and combat
