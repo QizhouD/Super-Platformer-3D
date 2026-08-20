@@ -2,7 +2,8 @@
   "name": "Platformer.PCG",
   "rootNamespace": "Platformer.PCG",
   "references": [
-    "Unity.ML-Agents"
+    "Unity.ML-Agents",
+    "UnityEngine.UI"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

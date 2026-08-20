@@ -12,6 +12,17 @@ namespace Platformer {
         [SerializeField, Self] Animator animator;
         [SerializeField, Anywhere] CinemachineFreeLook freeLookVCam;
         [SerializeField, Anywhere] InputReader input;
+        public InputReader InputReader => input;
+        public bool AllowDash => allowDash;
+        public bool AllowDoubleJump => allowDoubleJump;
+        public float MoveSpeed => moveSpeed;
+        public float JumpForce => jumpForce;
+        public float JumpDuration => jumpDuration;
+        public float GravityMultiplier => gravityMultiplier;
+        public float DashForce => dashForce;
+        public float DashDuration => dashDuration;
+        public event System.Action Jumped;
+        public event System.Action Dashed;
         
         [Header("Movement Settings")]
         [SerializeField] float moveSpeed = 6f;
@@ -40,13 +51,20 @@ namespace Platformer {
         [SerializeField] int attackDamage = 10;
 
         const float ZeroF = 0f;
+        const float JumpBuffer = 0.12f;
+        const float MinimumJumpHold = 0.1f;
+        const float StepHeight = 0.45f;
         
         Transform mainCam;
+        CapsuleCollider bodyCollider;
+        PhysicMaterial noFriction;
         
         float currentSpeed;
         float velocity;
         float jumpVelocity;
         float dashVelocity = 1f;
+        float jumpBufferUntil;
+        float jumpStartedAt;
 
         Vector3 movement;
 
@@ -70,6 +88,10 @@ namespace Platformer {
             freeLookVCam.OnTargetObjectWarped(transform, transform.position - freeLookVCam.transform.position - Vector3.forward);
             
             rb.freezeRotation = true;
+            rb.interpolation = RigidbodyInterpolation.Interpolate;
+            rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+            bodyCollider = GetComponent<CapsuleCollider>();
+            ApplyNoFriction();
             
             SetupTimers();
             SetupStateMachine();
@@ -97,15 +119,13 @@ namespace Platformer {
         }
 
         bool ReturnToLocomotionState() {
-            bool shouldReturn = groundChecker.IsGrounded 
-                                && !attackTimer.IsRunning 
-                                && !jumpTimer.IsRunning 
-                                && !dashTimer.IsRunning;
-    
-            if (shouldReturn) {
-                hasDoubleJump = true;
-            }
-    
+            var shouldReturn = groundChecker.IsGrounded
+                               && !attackTimer.IsRunning
+                               && !jumpTimer.IsRunning
+                               && !dashTimer.IsRunning
+                               && rb.velocity.y <= 0.6f;
+
+            if (shouldReturn) hasDoubleJump = true;
             return shouldReturn;
         }
 
@@ -115,13 +135,19 @@ namespace Platformer {
             jumpTimer = new CountdownTimer(jumpDuration);
             jumpCooldownTimer = new CountdownTimer(jumpCooldown);
 
-            jumpTimer.OnTimerStart += () => jumpVelocity = jumpForce;
+            jumpTimer.OnTimerStart += () => {
+                jumpVelocity = jumpForce;
+                Jumped?.Invoke();
+            };
             jumpTimer.OnTimerStop += () => jumpCooldownTimer.Start();
 
             dashTimer = new CountdownTimer(dashDuration);
             dashCooldownTimer = new CountdownTimer(dashCooldown);
 
-            dashTimer.OnTimerStart += () => dashVelocity = dashForce;
+            dashTimer.OnTimerStart += () => {
+                dashVelocity = dashForce;
+                Dashed?.Invoke();
+            };
             dashTimer.OnTimerStop += () => {
                 dashVelocity = 1f;
                 dashCooldownTimer.Start();
@@ -168,14 +194,10 @@ namespace Platformer {
         }
 
         void OnJump(bool performed) {
-            if (performed && !jumpTimer.IsRunning && !jumpCooldownTimer.IsRunning) {
-                if (groundChecker.IsGrounded) {
-                    jumpTimer.Start();
-                } else if (allowDoubleJump && hasDoubleJump) {
-                    jumpTimer.Start();
-                    hasDoubleJump = false;
-                }
-            } else if (!performed && jumpTimer.IsRunning) {
+            if (performed) {
+                jumpBufferUntil = Time.time + JumpBuffer;
+                TryConsumeJumpBuffer();
+            } else if (jumpTimer.IsRunning && Time.time - jumpStartedAt >= MinimumJumpHold) {
                 jumpTimer.Stop();
             }
         }
@@ -191,6 +213,7 @@ namespace Platformer {
 
         void Update() {
             movement = new Vector3(input.Direction.x, 0f, input.Direction.y);
+            TryConsumeJumpBuffer();
             stateMachine.Update();
 
             HandleTimers();
@@ -228,31 +251,127 @@ namespace Platformer {
         }
 
         public void HandleMovement() {
-            // Rotate movement direction to match camera rotation
             var adjustedDirection = Quaternion.AngleAxis(mainCam.eulerAngles.y, Vector3.up) * movement;
-            
-            if (adjustedDirection.magnitude > ZeroF) {
+            adjustedDirection.y = 0f;
+
+            if (adjustedDirection.sqrMagnitude > 0.0001f) {
                 HandleRotation(adjustedDirection);
-                HandleHorizontalMovement(adjustedDirection);
+                HandleHorizontalMovement(adjustedDirection.normalized);
                 SmoothSpeed(adjustedDirection.magnitude);
             } else {
                 SmoothSpeed(ZeroF);
-                
-                // Reset horizontal velocity for a snappy stop
                 rb.velocity = new Vector3(ZeroF, rb.velocity.y, ZeroF);
             }
         }
 
-        void HandleHorizontalMovement(Vector3 adjustedDirection) {
-            // Move the player
-            Vector3 velocity = adjustedDirection * (moveSpeed * dashVelocity * Time.fixedDeltaTime);
-            rb.velocity = new Vector3(velocity.x, rb.velocity.y, velocity.z);
+        void HandleHorizontalMovement(Vector3 direction) {
+            var desiredSpeed = ResolveMoveSpeed();
+            var desired = direction * desiredSpeed;
+            if (groundChecker.IsGrounded && !jumpTimer.IsRunning)
+                desired = SlideAndStep(desired);
+
+            rb.velocity = new Vector3(desired.x, rb.velocity.y, desired.z);
+        }
+
+        float ResolveMoveSpeed() {
+            var speed = moveSpeed * dashVelocity;
+            if (moveSpeed > 40f) speed *= Time.fixedDeltaTime;
+            return speed;
+        }
+
+        Vector3 SlideAndStep(Vector3 desired) {
+            if (bodyCollider == null) return desired;
+
+            var radius = Mathf.Max(0.05f, bodyCollider.radius * 0.9f);
+            var worldCenter = transform.TransformPoint(bodyCollider.center);
+            var half = Mathf.Max(0f, bodyCollider.height * 0.5f - bodyCollider.radius);
+            var bottom = worldCenter + Vector3.down * half;
+            var top = worldCenter + Vector3.up * half;
+            var travel = desired.magnitude * Time.fixedDeltaTime + 0.08f;
+            var heading = desired.normalized;
+            var mask = ~(1 << gameObject.layer);
+
+            if (Physics.CapsuleCast(
+                    bottom + Vector3.up * 0.05f,
+                    top,
+                    radius,
+                    heading,
+                    out var hit,
+                    travel,
+                    mask,
+                    QueryTriggerInteraction.Ignore)) {
+                if (hit.rigidbody == rb) return desired;
+
+                if (TryStepUp(bottom, top, radius, heading, travel))
+                    return desired;
+
+                var slide = Vector3.ProjectOnPlane(desired, hit.normal);
+                slide.y = 0f;
+                if (slide.sqrMagnitude < 0.01f && groundChecker.IsGrounded)
+                    rb.position += Vector3.up * 0.06f;
+                return slide;
+            }
+
+            return desired;
+        }
+
+        bool TryStepUp(Vector3 bottom, Vector3 top, float radius, Vector3 heading, float travel) {
+            var raisedBottom = bottom + Vector3.up * StepHeight;
+            var raisedTop = top + Vector3.up * StepHeight;
+            if (Physics.CapsuleCast(
+                    raisedBottom,
+                    raisedTop,
+                    radius,
+                    heading,
+                    travel,
+                    ~(1 << gameObject.layer),
+                    QueryTriggerInteraction.Ignore))
+                return false;
+
+            rb.position += Vector3.up * StepHeight;
+            return true;
         }
 
         void HandleRotation(Vector3 adjustedDirection) {
-            // Adjust rotation to match movement direction
             var targetRotation = Quaternion.LookRotation(adjustedDirection);
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+            transform.rotation = Quaternion.RotateTowards(
+                transform.rotation,
+                targetRotation,
+                rotationSpeed * Time.fixedDeltaTime);
+        }
+
+        void TryConsumeJumpBuffer() {
+            if (Time.time > jumpBufferUntil) return;
+            if (jumpTimer.IsRunning || jumpCooldownTimer.IsRunning) return;
+
+            if (groundChecker.CanJump) {
+                jumpTimer.Start();
+                jumpStartedAt = Time.time;
+                jumpBufferUntil = 0f;
+                return;
+            }
+
+            if (allowDoubleJump && hasDoubleJump) {
+                jumpTimer.Start();
+                jumpStartedAt = Time.time;
+                jumpBufferUntil = 0f;
+                hasDoubleJump = false;
+            }
+        }
+
+        void ApplyNoFriction() {
+            noFriction = new PhysicMaterial("PlayerNoFriction") {
+                dynamicFriction = 0f,
+                staticFriction = 0f,
+                bounciness = 0f,
+                frictionCombine = PhysicMaterialCombine.Minimum,
+                bounceCombine = PhysicMaterialCombine.Minimum
+            };
+            if (bodyCollider != null) bodyCollider.material = noFriction;
+        }
+
+        void OnDestroy() {
+            if (noFriction != null) Destroy(noFriction);
         }
 
         void SmoothSpeed(float value) {

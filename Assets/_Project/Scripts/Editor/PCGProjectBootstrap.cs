@@ -364,6 +364,7 @@ public static class PCGProjectBootstrap {
             observationSensor,
             datasetRecorder,
             navigationAgent);
+        PCGLabExperience.EnsureInstalled(panel);
 
         EditorSceneManager.SaveScene(scene, ScenePath);
         AddSceneToBuildSettings(ScenePath);

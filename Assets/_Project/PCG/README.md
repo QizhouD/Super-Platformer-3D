@@ -7,11 +7,30 @@ This folder contains the deterministic PCG assets and the playable validation la
 1. Open `Assets/_Project/Scenes/PCG_Lab.unity`.
 2. Enter Play Mode.
 3. Move Player 2 with WASD, jump with Space, hold RMB to control the camera, and dash with Shift.
-4. Use the top-left debug panel to change the seed and regenerate.
+4. Use the top-left PCG Lab HUD to change the seed and regenerate. The old IMGUI debug panel is hidden while the presentation layer is active.
 5. Toggle `Double Jump` or `Dash` to unlock the same ability on Player 2 and include gated chunks.
-6. Use `Copy Seed` or `Copy Manifest` to reproduce a generated layout.
+6. Use `COPY SEED` or `MANIFEST` to reproduce a generated layout.
+
+The lab presentation is installed at Play Mode start by `PCGLabExperience`. It restyles platforms by chunk category, adds checkpoint beacons, dusk lighting/fog, HUD, and SFX. Generation, checkpoints, observations, and training controls stay the same.
 
 The default seed is `82431` and the default level contains 16 chunks.
+
+Generation is chunk-based and finite, not an endless spawner:
+
+```text
+Play
+→ LevelGenerator.Generate(seed)
+→ Rhythm role + difficulty-at-progress
+→ ChunkSelector (ability, reach, grammar, overlap)
+→ Instantiate existing chunk prefab
+→ Checkpoint at each exit
+→ Optional safe fallback + project-asset decoration
+```
+
+Reachability uses Player 2's jump/move numbers with a 0.82 safety factor when
+`Sync Reach From Player` is enabled on `LevelGenerationConfig`. Same seed still
+reproduces the same route. Scene gizmos color chunks green/yellow/red by
+difficulty and draw entry/exit links.
 
 The lab reuses the `Player 2` prefab, `InputReader`, `CameraManager`, and Cinemachine
 FreeLook setup from `Level_Tutorial`. Each generated chunk adds an exit checkpoint.
@@ -120,7 +139,7 @@ changes is intended.
 
 ## Tests
 
-The `Platformer.PCG.Tests` EditMode assembly currently contains 26 tests covering:
+The `Platformer.PCG.Tests` EditMode assembly currently contains 36 tests covering:
 
 - deterministic random sequences and chunk selection;
 - ability and minimum-progress filtering;
@@ -132,4 +151,6 @@ The `Platformer.PCG.Tests` EditMode assembly currently contains 26 tests coverin
 - adaptive difficulty scoring and smoothing;
 - the stable 20-value Game AI observation contract;
 - behavior labeling, reward calculation, and episode metadata serialization.
-- normalized ML navigation observations and next-target direction encoding.
+- normalized ML navigation observations and next-target direction encoding;
+- lab presentation palette, category inference, and debug-panel API;
+- reach safety, rhythm beats, safest-chunk fallback, and deterministic rhythm weights.

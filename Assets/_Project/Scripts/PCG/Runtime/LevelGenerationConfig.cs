@@ -14,6 +14,13 @@ namespace Platformer.PCG {
         [SerializeField, Min(0)] int recoveryChunkCooldown = 3;
         [SerializeField, Min(0f)] float overlapPadding = 0.08f;
         [SerializeField, Min(1)] int maximumConsecutiveCategory = 2;
+        [Header("Reachability")]
+        [SerializeField, Range(0.6f, 1f)] float reachSafetyFactor = 0.82f;
+        [SerializeField] bool syncReachFromPlayer = true;
+        [Header("Rhythm")]
+        [SerializeField] bool useRhythmPlan = true;
+        [SerializeField] bool spawnSafeFallback = true;
+        [SerializeField] bool decorateWithProjectAssets = true;
 
         public PlatformChunkData[] Chunks => chunks;
         public int InitialChunkCount => initialChunkCount;
@@ -23,6 +30,11 @@ namespace Platformer.PCG {
         public int RecoveryChunkCooldown => recoveryChunkCooldown;
         public float OverlapPadding => overlapPadding;
         public int MaximumConsecutiveCategory => maximumConsecutiveCategory;
+        public float ReachSafetyFactor => reachSafetyFactor;
+        public bool SyncReachFromPlayer => syncReachFromPlayer;
+        public bool UseRhythmPlan => useRhythmPlan;
+        public bool SpawnSafeFallback => spawnSafeFallback;
+        public bool DecorateWithProjectAssets => decorateWithProjectAssets;
 
         public float DifficultyAt(int chunkIndex, int totalChunks) {
             var progress = totalChunks <= 1 ? 0f : chunkIndex / (float)(totalChunks - 1);

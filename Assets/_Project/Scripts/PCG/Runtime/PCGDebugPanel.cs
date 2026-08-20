@@ -19,12 +19,21 @@ namespace Platformer.PCG {
         bool trainingMode;
         Vector2 manifestScroll;
 
+        public bool HideLegacyGui { get; set; }
+        public string SeedText => seedText;
+        public bool DoubleJumpEnabled => doubleJump;
+        public bool DashEnabled => dash;
+        public bool AdaptiveDifficultyEnabled => adaptiveDifficulty;
+        public bool TrainingModeEnabled => trainingMode;
+        public MonoBehaviour TrainingControllerBehaviour => trainingControllerBehaviour;
+
         IPCGTrainingController TrainingController =>
             trainingControllerBehaviour as IPCGTrainingController;
 
         void Awake() {
             if (generator == null) generator = FindObjectOfType<LevelGenerator>();
             if (generator != null) seedText = generator.Seed.ToString();
+            PCGLabExperience.EnsureInstalled(this);
         }
 
         public void Configure(
@@ -46,10 +55,63 @@ namespace Platformer.PCG {
             trainingControllerBehaviour = mlTrainingController;
             trainingMode = TrainingController != null && TrainingController.TrainingMode;
             if (generator != null) seedText = generator.Seed.ToString();
+            var experience = GetComponent<PCGLabExperience>();
+            experience?.Bind(this);
+        }
+
+        public void SetDoubleJump(bool value) => doubleJump = value;
+
+        public void SetDash(bool value) => dash = value;
+
+        public void SetAdaptiveDifficulty(bool value) {
+            adaptiveDifficulty = value;
+            difficultyDirector?.SetAdaptiveDifficultyEnabled(adaptiveDifficulty);
+        }
+
+        public void SetTrainingMode(bool value) {
+            trainingMode = value;
+            TrainingController?.SetTrainingMode(trainingMode);
+        }
+
+        public void GenerateFromSeed(string seed) {
+            seedText = seed;
+            Generate();
+        }
+
+        public void GenerateRandomSeed() {
+            seedText = Environment.TickCount.ToString();
+            Generate();
+        }
+
+        public void CopySeed() {
+            if (generator != null) GUIUtility.systemCopyBuffer = generator.Seed.ToString();
+        }
+
+        public void CopyManifest() {
+            if (generator != null && generator.LastManifest != null)
+                GUIUtility.systemCopyBuffer = generator.LastManifest.ToJson();
+        }
+
+        public void CopyTelemetry() {
+            if (telemetry != null) GUIUtility.systemCopyBuffer = telemetry.ToJson();
+        }
+
+        public void CopyObservation() {
+            if (observationSensor != null)
+                GUIUtility.systemCopyBuffer = observationSensor.LatestObservationToJson();
+        }
+
+        public void StartDatasetRecording() => datasetRecorder?.StartRecording();
+
+        public void StopDatasetRecording() => datasetRecorder?.StopRecording(false);
+
+        public void CopyDatasetPath() {
+            if (datasetRecorder != null && !string.IsNullOrEmpty(datasetRecorder.CurrentEpisodeDirectory))
+                GUIUtility.systemCopyBuffer = datasetRecorder.CurrentEpisodeDirectory;
         }
 
         void OnGUI() {
-            if (generator == null) return;
+            if (HideLegacyGui || generator == null) return;
 
             GUILayout.BeginArea(new Rect(16f, 16f, 390f, Screen.height - 32f), GUI.skin.box);
             GUILayout.Label("PCG Lab");

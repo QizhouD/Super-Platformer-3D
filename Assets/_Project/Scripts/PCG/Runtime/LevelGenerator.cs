@@ -36,6 +36,7 @@ namespace Platformer.PCG {
 
         public GeneratedLevelManifest LastManifest { get; private set; }
         public IReadOnlyList<PlatformChunk> SpawnedChunks => spawnedChunks;
+        public LevelGenerationConfig Config => config;
         public float DifficultyBias => difficultyBias;
         public event Action<GeneratedLevelManifest> GenerationFinished;
 
@@ -65,6 +66,7 @@ namespace Platformer.PCG {
 
             if (generatedRoot == null) generatedRoot = transform;
 
+            var reach = traversalCapabilities;
             var random = new DeterministicRandom(seed);
             var count = chunkCountOverride > 0 ? chunkCountOverride : config.InitialChunkCount;
             var currentAnchor = startAnchor;
@@ -79,6 +81,9 @@ namespace Platformer.PCG {
                 var placed = false;
                 var targetDifficulty = Mathf.Clamp01(
                     config.DifficultyAt(index, count) + difficultyBias);
+                var role = config.UseRhythmPlan
+                    ? PCGRhythmPlanner.RoleAt(index, count)
+                    : (PCGRhythmRole?)null;
 
                 for (var attempt = 0; attempt < config.MaximumGenerationAttempts; attempt++) {
                     var data = selector.Select(
@@ -90,12 +95,13 @@ namespace Platformer.PCG {
                         previousCategory,
                         consecutiveCategoryCount,
                         config.MaximumConsecutiveCategory,
-                        traversalCapabilities,
+                        reach,
                         consecutiveFlatCount >= maximumConsecutiveFlatChunks,
                         consecutiveStraightCount >= maximumConsecutiveStraightChunks,
                         currentElevation,
                         minimumRelativeElevation,
-                        maximumRelativeElevation);
+                        maximumRelativeElevation,
+                        role);
 
                     if (data == null) break;
 
@@ -135,14 +141,73 @@ namespace Platformer.PCG {
                     break;
                 }
 
+                if (!placed && config.SpawnSafeFallback)
+                    placed = TryPlaceSafeFallback(
+                        index,
+                        abilities,
+                        traversalCapabilities,
+                        ref currentAnchor,
+                        ref previousCategory,
+                        ref consecutiveCategoryCount,
+                        ref consecutiveFlatCount,
+                        ref consecutiveStraightCount,
+                        startElevation,
+                        ref currentElevation,
+                        targetDifficulty);
+
                 if (!placed) {
                     Fail($"Unable to place chunk {index} after {config.MaximumGenerationAttempts} attempts.");
                     return;
                 }
             }
 
+            if (config.DecorateWithProjectAssets)
+                PCGExistingAssetPlacer.Decorate(this, new DeterministicRandom(seed ^ 0x51ED));
+
             LastManifest.completed = true;
             GenerationFinished?.Invoke(LastManifest);
+        }
+
+        bool TryPlaceSafeFallback(
+            int index,
+            PlayerAbilityProfile abilities,
+            PlayerTraversalCapabilities reach,
+            ref Transform currentAnchor,
+            ref ChunkCategory? previousCategory,
+            ref int consecutiveCategoryCount,
+            ref int consecutiveFlatCount,
+            ref int consecutiveStraightCount,
+            float startElevation,
+            ref float currentElevation,
+            float targetDifficulty) {
+            var data = selector.SelectSafest(config.Chunks, index, abilities, reach);
+            if (data == null) return false;
+
+            var candidate = Instantiate(data.Prefab, generatedRoot);
+            candidate.name = $"{index:00}_{data.ChunkId}_safe";
+            Align(candidate, currentAnchor);
+            if (overlapValidator.OverlapsAny(candidate, spawnedChunks, config.OverlapPadding)) {
+                DestroyGeneratedObject(candidate.gameObject);
+                return false;
+            }
+
+            spawnedChunks.Add(candidate);
+            LastManifest.chunks.Add(new GeneratedChunkRecord {
+                index = index,
+                chunkId = data.ChunkId,
+                position = candidate.transform.position,
+                rotation = candidate.transform.rotation,
+                targetDifficulty = targetDifficulty,
+                actualDifficulty = data.CompositeDifficulty
+            });
+            previousCategory = data.Category;
+            consecutiveCategoryCount = 1;
+            consecutiveFlatCount = data.ChangesElevation ? 0 : consecutiveFlatCount + 1;
+            consecutiveStraightCount = data.ChangesDirection ? 0 : consecutiveStraightCount + 1;
+            currentAnchor = candidate.Exits[0];
+            currentElevation = currentAnchor.position.y - startElevation;
+            CreateCheckpoint(candidate, currentAnchor, index);
+            return true;
         }
 
         public void SetCapabilities(bool doubleJump, bool dash) {
@@ -204,6 +269,42 @@ namespace Platformer.PCG {
         static void DestroyGeneratedObject(UnityEngine.Object target) {
             if (Application.isPlaying) Destroy(target);
             else DestroyImmediate(target);
+        }
+
+        void OnDrawGizmos() {
+            if (spawnedChunks.Count == 0) return;
+            for (var i = 0; i < spawnedChunks.Count; i++) {
+                var chunk = spawnedChunks[i];
+                if (chunk == null) continue;
+                var difficulty = LastManifest != null && i < LastManifest.chunks.Count
+                    ? LastManifest.chunks[i].actualDifficulty
+                    : 0.3f;
+                Gizmos.color = difficulty < 0.35f
+                    ? new Color(0.3f, 0.85f, 0.35f, 0.35f)
+                    : difficulty < 0.6f
+                        ? new Color(0.95f, 0.82f, 0.2f, 0.35f)
+                        : new Color(0.9f, 0.25f, 0.2f, 0.35f);
+                var bounds = chunk.CalculateBounds();
+                Gizmos.DrawWireCube(bounds.center, bounds.size);
+                if (chunk.Entry != null) {
+                    Gizmos.color = Color.green;
+                    Gizmos.DrawSphere(chunk.Entry.position, 0.18f);
+                }
+                if (chunk.Exits != null) {
+                    Gizmos.color = Color.cyan;
+                    foreach (var exit in chunk.Exits) {
+                        if (exit == null) continue;
+                        Gizmos.DrawSphere(exit.position, 0.18f);
+                        if (chunk.Entry != null)
+                            Gizmos.DrawLine(chunk.Entry.position, exit.position);
+                    }
+                }
+            }
+
+            Gizmos.color = new Color(1f, 0.85f, 0.2f, 0.2f);
+            var reach = traversalCapabilities.HorizontalReach(new PlayerAbilityProfile(hasDoubleJump, hasDash));
+            if (startAnchor != null)
+                Gizmos.DrawWireSphere(startAnchor.position, Mathf.Max(1f, reach));
         }
     }
 }

@@ -1,5 +1,22 @@
 # Changelog
 
+## [Unreleased] - 2026-08-19
+
+### Added
+
+- Extended PCG_LAB generation without replacing the chunk pipeline:
+  - player-derived reach model with a 0.82 safety factor;
+  - start / easy / challenge / recovery / reward rhythm weights;
+  - safest-chunk fallback when placement retries fail;
+  - reuse of existing `crate-box` and `chest` prefabs on combat/recovery slots;
+  - Scene gizmos for chunk bounds, connections, and reach.
+
+- Upgraded `PCG_Lab` presentation without changing generation, observations, or control:
+  - dusk canyon lighting, fog, mesa backdrop, and category-colored platforms;
+  - checkpoint beacons, recovery markers, and timed-platform warning pulse;
+  - runtime UGUI HUD that keeps seed, generate, ability, training, and dataset controls;
+  - jump / dash / checkpoint / respawn / generate SFX plus a light ambient bed.
+
 ## [Unreleased] - 2026-07-27
 
 ### Added
