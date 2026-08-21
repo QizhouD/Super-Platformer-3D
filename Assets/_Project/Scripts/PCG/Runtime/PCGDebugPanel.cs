@@ -59,9 +59,15 @@ namespace Platformer.PCG {
             experience?.Bind(this);
         }
 
-        public void SetDoubleJump(bool value) => doubleJump = value;
+        public void SetDoubleJump(bool value) {
+            doubleJump = value;
+            ApplyAbilitiesToPlayer();
+        }
 
-        public void SetDash(bool value) => dash = value;
+        public void SetDash(bool value) {
+            dash = value;
+            ApplyAbilitiesToPlayer();
+        }
 
         public void SetAdaptiveDifficulty(bool value) {
             adaptiveDifficulty = value;
@@ -218,15 +224,19 @@ namespace Platformer.PCG {
             GUILayout.EndArea();
         }
 
+        void ApplyAbilitiesToPlayer() {
+            if (player == null) return;
+            player.SendMessage(
+                "ApplyPCGTraversalAbilities",
+                new PlayerAbilityProfile(doubleJump, dash),
+                SendMessageOptions.DontRequireReceiver);
+        }
+
         void Generate() {
             if (!int.TryParse(seedText, out var parsedSeed)) parsedSeed = 82431;
             generator.Seed = parsedSeed;
             generator.SetCapabilities(doubleJump, dash);
-            if (player != null)
-                player.SendMessage(
-                    "ApplyPCGTraversalAbilities",
-                    new PlayerAbilityProfile(doubleJump, dash),
-                    SendMessageOptions.DontRequireReceiver);
+            ApplyAbilitiesToPlayer();
             generator.Generate();
             seedText = generator.Seed.ToString();
         }

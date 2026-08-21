@@ -14,7 +14,7 @@ Material:
   m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
+  m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
@@ -24,21 +24,23 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: bd7d0d213a99c4b45ab6bc5789ca5f6e, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _NormalMap:
-        m_Texture: {fileID: 2800000, guid: 5d1a91da624cbe3419894ef66da10da7, type: 3}
+        m_Texture: {fileID: 2800000, guid: 8c4e1a7b2f904c3d9e6a5b8c1d2e3f40, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _ColorVariation: 0.16
     - _Glossiness: 0
+    - _Grout: 0.16
+    - _GroutDarken: 0.42
+    - _Highlight: 0.2
     - _Metallic: 0
-    - _NoiseFrequency: 0.11
-    - _NoiseScale: -0.25
-    - _Tess: 8
+    - _MinSmoothness: 0
+    - _PixelsPerMeter: 6
+    - _RampSteps: 3
+    - _Tess: 1
+    - _Tiling: 0.18
+    - _TriplanarSharpness: 8
     m_Colors:
-    - _Color: {r: 0.654902, g: 0.23921569, b: 0.043137256, a: 1}
-    - _NoiseOffset: {r: 1.28, g: 3.97, b: 1.11, a: 0}
+    - _Color: {r: 1, g: 0.62, b: 0.22, a: 1}
   m_BuildTextureStacks: []

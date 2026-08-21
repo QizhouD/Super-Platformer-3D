@@ -20,6 +20,28 @@ namespace Platformer.PCG.Tests {
         }
 
         [Test]
+        public void Theme_ConfiguresSunWithSoftShadowsAndDuskColor() {
+            var sunObject = new GameObject("PCG Sun Test");
+            var sun = sunObject.AddComponent<Light>();
+            sun.type = LightType.Directional;
+            sun.shadows = LightShadows.None;
+            sun.intensity = 1f;
+            sun.color = Color.white;
+
+            PCGLabTheme.ConfigureSun(sun);
+
+            Assert.That(sun.shadows, Is.EqualTo(LightShadows.Soft));
+            Assert.That(sun.intensity, Is.EqualTo(PCGLabTheme.SunIntensity));
+            Assert.That(sun.shadowStrength, Is.EqualTo(PCGLabTheme.SunShadowStrength));
+            Assert.That(sun.shadowBias, Is.EqualTo(PCGLabTheme.SunShadowBias));
+            Assert.That(sun.shadowNormalBias, Is.EqualTo(PCGLabTheme.SunShadowNormalBias));
+            Assert.That(sun.color, Is.EqualTo(PCGLabTheme.Sun));
+            Assert.That(sun.transform.rotation.eulerAngles.x, Is.EqualTo(PCGLabTheme.SunEuler.x).Within(0.1f));
+
+            Object.DestroyImmediate(sunObject);
+        }
+
+        [Test]
         public void Theme_CreatesLitMaterialWithAlbedoAndEmission() {
             var albedo = new Color(0.4f, 0.2f, 0.1f, 1f);
             var emission = new Color(0.2f, 0.1f, 0.05f, 1f);
@@ -31,10 +53,46 @@ namespace Platformer.PCG.Tests {
             Assert.That(material.shader, Is.Not.Null);
             Assert.That(material.shader.name, Is.Not.EqualTo("Hidden/InternalErrorShader"));
             Assert.That(material.shader.name, Is.Not.EqualTo("Standard"));
-            if (material.HasProperty("_BaseColor"))
-                Assert.That(material.GetColor("_BaseColor"), Is.EqualTo(albedo));
-            else if (material.HasProperty("_Color"))
-                Assert.That(material.GetColor("_Color"), Is.EqualTo(albedo));
+            var expected = PCGLabTheme.ToHeroPalette(albedo);
+            var actual = material.HasProperty("_BaseColor")
+                ? material.GetColor("_BaseColor")
+                : material.GetColor("_Color");
+            Assert.That(actual.r, Is.EqualTo(expected.r).Within(0.001f));
+            Assert.That(actual.g, Is.EqualTo(expected.g).Within(0.001f));
+            Assert.That(actual.b, Is.EqualTo(expected.b).Within(0.001f));
+
+            Object.DestroyImmediate(material);
+            Object.DestroyImmediate(source);
+        }
+
+        [Test]
+        public void NoiseGround_ExposesPixelHeroSurfaceProperties() {
+            var shader = Shader.Find("ShaderTest/NoiseGround");
+            Assert.That(shader, Is.Not.Null);
+            var material = new Material(shader);
+
+            Assert.That(material.HasProperty("_PixelsPerMeter"), Is.True);
+            Assert.That(material.HasProperty("_Grout"), Is.True);
+            Assert.That(material.HasProperty("_RampSteps"), Is.True);
+            Assert.That(material.HasProperty("_TriplanarSharpness"), Is.True);
+            Assert.That(material.HasProperty("_Color"), Is.True);
+
+            Object.DestroyImmediate(material);
+        }
+
+        [Test]
+        public void Theme_TintedCloneUsesZeroGlossHeroPalette() {
+            var shader = Shader.Find("ShaderTest/NoiseGround");
+            Assert.That(shader, Is.Not.Null);
+            var source = new Material(shader);
+            var material = PCGLabTheme.CreateTintedClone(source, new Color(0.4f, 0.3f, 0.2f));
+
+            Assert.That(material.GetFloat("_Glossiness"), Is.EqualTo(0f).Within(0.001f));
+            Assert.That(material.GetFloat("_Metallic"), Is.EqualTo(0f).Within(0.001f));
+            var color = material.GetColor("_Color");
+            Color.RGBToHSV(new Color(0.4f, 0.3f, 0.2f), out _, out var sourceSat, out _);
+            Color.RGBToHSV(color, out _, out var heroSat, out _);
+            Assert.That(heroSat, Is.GreaterThan(sourceSat));
 
             Object.DestroyImmediate(material);
             Object.DestroyImmediate(source);

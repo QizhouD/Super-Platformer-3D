@@ -10,6 +10,7 @@ namespace Platformer {
         }
 
         public override void FixedUpdate() {
+            player.HandleJump();
             player.HandleMovement();
         }
     }

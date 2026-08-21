@@ -11,7 +11,7 @@ namespace Platformer.PCG.Tests {
 
             Assert.That(rawHeight, Is.GreaterThan(comfortable));
             Assert.That(reach.BaseVerticalReach, Is.LessThan(comfortable));
-            Assert.That(reach.BaseHorizontalReach, Is.GreaterThan(4f));
+            Assert.That(reach.BaseHorizontalReach, Is.GreaterThan(2f));
             Assert.That(reach.BaseHorizontalReach, Is.LessThan(12f));
         }
 

@@ -103,23 +103,8 @@ namespace Platformer.PCG {
         void ApplyAtmosphere(Light sun) {
             var sky = PCGLabTheme.CreateSkybox();
             if (sky != null) RenderSettings.skybox = sky;
-            RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Trilight;
-            RenderSettings.ambientSkyColor = PCGLabTheme.SkyZenith * 0.45f;
-            RenderSettings.ambientEquatorColor = PCGLabTheme.SkyHorizon * 0.35f;
-            RenderSettings.ambientGroundColor = PCGLabTheme.GroundTint * 0.2f;
-            RenderSettings.fog = true;
-            RenderSettings.fogMode = FogMode.ExponentialSquared;
-            RenderSettings.fogColor = PCGLabTheme.Fog;
-            RenderSettings.fogDensity = 0.012f;
-            RenderSettings.subtractiveShadowColor = PCGLabTheme.GroundTint;
-
-            if (sun != null) {
-                sun.color = PCGLabTheme.Sun;
-                sun.intensity = 1.25f;
-                sun.shadows = LightShadows.Soft;
-                sun.transform.rotation = Quaternion.Euler(28f, -38f, 0f);
-            }
-
+            PCGLabTheme.ConfigureFogAndAmbient();
+            PCGLabTheme.ConfigureSun(sun);
             DynamicGI.UpdateEnvironment();
         }
 
@@ -128,7 +113,7 @@ namespace Platformer.PCG {
             var firstRenderer = startPlatform.GetComponentInChildren<Renderer>();
             startMaterial = PCGLabTheme.CreateTintedClone(
                 firstRenderer != null ? firstRenderer.sharedMaterial : null,
-                new Color(0.78f, 0.52f, 0.34f));
+                new Color(1f, 0.62f, 0.22f));
             foreach (var renderer in startPlatform.GetComponentsInChildren<Renderer>())
                 renderer.sharedMaterial = startMaterial;
 
@@ -201,12 +186,7 @@ namespace Platformer.PCG {
 
             var fillObject = new GameObject("Fill Light");
             fillObject.transform.SetParent(backdropRoot, false);
-            fillObject.transform.rotation = Quaternion.Euler(18f, 140f, 0f);
-            var fill = fillObject.AddComponent<Light>();
-            fill.type = LightType.Directional;
-            fill.color = PCGLabTheme.FillLight;
-            fill.intensity = 0.38f;
-            fill.shadows = LightShadows.None;
+            PCGLabTheme.ConfigureFillLight(fillObject.AddComponent<Light>());
             worldObjects.Add(fillObject);
 
             var voidFloor = CreatePrimitive(

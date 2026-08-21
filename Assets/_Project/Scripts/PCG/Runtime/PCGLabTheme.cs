@@ -6,8 +6,21 @@ namespace Platformer.PCG {
         public static readonly Color SkyHorizon = new Color(0.55f, 0.36f, 0.52f);
         public static readonly Color GroundTint = new Color(0.36f, 0.22f, 0.18f);
         public static readonly Color Fog = new Color(0.73f, 0.52f, 0.42f);
-        public static readonly Color Sun = new Color(1f, 0.84f, 0.62f);
-        public static readonly Color FillLight = new Color(0.42f, 0.55f, 0.72f);
+        public static readonly Color Sun = new Color(1f, 0.78f, 0.52f);
+        public static readonly Color FillLight = new Color(0.38f, 0.52f, 0.74f);
+        public static readonly Vector3 SunEuler = new Vector3(28f, -38f, 0f);
+        public static readonly Vector3 FillLightEuler = new Vector3(22f, 145f, 0f);
+        public const float SunIntensity = 1.35f;
+        public const float SunBounceIntensity = 1.15f;
+        public const float SunShadowStrength = 0.85f;
+        public const float SunShadowBias = 0.05f;
+        public const float SunShadowNormalBias = 0.4f;
+        public const float SunShadowNearPlane = 0.2f;
+        public const float FillLightIntensity = 0.48f;
+        public const float FogDensity = 0.016f;
+        public const float AmbientSkyScale = 0.34f;
+        public const float AmbientEquatorScale = 0.24f;
+        public const float AmbientGroundScale = 0.14f;
         public static readonly Color Accent = new Color(1f, 0.62f, 0.28f);
         public static readonly Color AccentCool = new Color(0.35f, 0.86f, 0.82f);
         public static readonly Color Panel = new Color(0.07f, 0.06f, 0.08f, 0.82f);
@@ -19,15 +32,15 @@ namespace Platformer.PCG {
 
         public static Color CategoryColor(ChunkCategory category) {
             switch (category) {
-                case ChunkCategory.Moving: return new Color(0.28f, 0.78f, 0.92f);
-                case ChunkCategory.Timed: return new Color(0.98f, 0.62f, 0.18f);
-                case ChunkCategory.AbilityGate: return new Color(0.78f, 0.42f, 0.95f);
-                case ChunkCategory.Combat: return new Color(0.86f, 0.28f, 0.24f);
-                case ChunkCategory.Exploration: return new Color(0.32f, 0.72f, 0.62f);
-                case ChunkCategory.Recovery: return new Color(0.42f, 0.82f, 0.46f);
+                case ChunkCategory.Moving: return new Color(0.18f, 0.82f, 0.98f);
+                case ChunkCategory.Timed: return new Color(1f, 0.52f, 0.12f);
+                case ChunkCategory.AbilityGate: return new Color(0.92f, 0.32f, 1f);
+                case ChunkCategory.Combat: return new Color(0.96f, 0.2f, 0.22f);
+                case ChunkCategory.Exploration: return new Color(0.12f, 0.84f, 0.62f);
+                case ChunkCategory.Recovery: return new Color(0.38f, 0.92f, 0.32f);
                 case ChunkCategory.Checkpoint: return Accent;
-                case ChunkCategory.Finish: return new Color(1f, 0.84f, 0.32f);
-                default: return new Color(0.78f, 0.56f, 0.38f);
+                case ChunkCategory.Finish: return new Color(1f, 0.86f, 0.2f);
+                default: return new Color(1f, 0.62f, 0.22f);
             }
         }
 
@@ -44,13 +57,10 @@ namespace Platformer.PCG {
                 template = source;
         }
 
-        public static Material CreateLitMaterial(Color albedo, Color emission, float smoothness = 0.28f) {
+        public static Material CreateLitMaterial(Color albedo, Color emission, float smoothness = 0f) {
             var material = CreateBaseMaterial();
             material.name = "PCGLabRuntime";
-            ApplyColor(material, albedo);
-            if (material.HasProperty("_Metallic")) material.SetFloat("_Metallic", 0.08f);
-            if (material.HasProperty("_Smoothness")) material.SetFloat("_Smoothness", smoothness);
-            if (material.HasProperty("_Glossiness")) material.SetFloat("_Glossiness", smoothness);
+            ApplyPixelHeroStyle(material, albedo);
             if (material.HasProperty("_EmissionColor")) {
                 material.EnableKeyword("_EMISSION");
                 material.SetColor("_EmissionColor", emission);
@@ -64,14 +74,84 @@ namespace Platformer.PCG {
                 ? new Material(source)
                 : CreateBaseMaterial();
             material.name = "PCGLabTint";
-            ApplyColor(material, albedo);
+            ApplyPixelHeroStyle(material, albedo);
             return material;
+        }
+
+        public static Color ToHeroPalette(Color color) {
+            Color.RGBToHSV(color, out var hue, out var saturation, out var value);
+            saturation = Mathf.Clamp01(saturation * 1.18f + 0.08f);
+            value = Mathf.Clamp01(Mathf.Max(value, 0.58f) * 1.06f);
+            var hero = Color.HSVToRGB(hue, saturation, value);
+            hero.a = color.a;
+            return hero;
+        }
+
+        public static void ApplyPixelHeroStyle(Material material, Color albedo) {
+            if (material == null) return;
+            ApplyColor(material, ToHeroPalette(albedo));
+            ApplySurfaceFinish(material, 0f, 0f);
+            if (material.HasProperty("_MinSmoothness")) material.SetFloat("_MinSmoothness", 0f);
+            if (material.HasProperty("_PixelsPerMeter")) material.SetFloat("_PixelsPerMeter", 6f);
+            if (material.HasProperty("_Grout")) material.SetFloat("_Grout", 0.16f);
+            if (material.HasProperty("_RampSteps")) material.SetFloat("_RampSteps", 3f);
+            if (material.HasProperty("_Highlight")) material.SetFloat("_Highlight", 0.2f);
+            if (material.HasProperty("_ColorVariation")) material.SetFloat("_ColorVariation", 0.16f);
+            if (material.HasProperty("_TriplanarSharpness")) material.SetFloat("_TriplanarSharpness", 8f);
+            var texture = material.HasProperty("_MainTex") ? material.GetTexture("_MainTex") : null;
+            if (texture != null) {
+                texture.filterMode = FilterMode.Point;
+                texture.mipMapBias = -10f;
+            }
         }
 
         public static void ApplyColor(Material material, Color albedo) {
             if (material == null) return;
             if (material.HasProperty("_BaseColor")) material.SetColor("_BaseColor", albedo);
             if (material.HasProperty("_Color")) material.SetColor("_Color", albedo);
+        }
+
+        public static void ApplySurfaceFinish(Material material, float metallic, float smoothness) {
+            if (material == null) return;
+            if (material.HasProperty("_Metallic")) material.SetFloat("_Metallic", metallic);
+            if (material.HasProperty("_Smoothness")) material.SetFloat("_Smoothness", smoothness);
+            if (material.HasProperty("_Glossiness")) material.SetFloat("_Glossiness", smoothness);
+        }
+
+        public static void ConfigureSun(Light sun) {
+            if (sun == null) return;
+            sun.type = LightType.Directional;
+            sun.color = Sun;
+            sun.intensity = SunIntensity;
+            sun.bounceIntensity = SunBounceIntensity;
+            sun.shadows = LightShadows.Soft;
+            sun.shadowStrength = SunShadowStrength;
+            sun.shadowBias = SunShadowBias;
+            sun.shadowNormalBias = SunShadowNormalBias;
+            sun.shadowNearPlane = SunShadowNearPlane;
+            sun.transform.rotation = Quaternion.Euler(SunEuler);
+        }
+
+        public static void ConfigureFillLight(Light fill) {
+            if (fill == null) return;
+            fill.type = LightType.Directional;
+            fill.color = FillLight;
+            fill.intensity = FillLightIntensity;
+            fill.bounceIntensity = 0.4f;
+            fill.shadows = LightShadows.None;
+            fill.transform.rotation = Quaternion.Euler(FillLightEuler);
+        }
+
+        public static void ConfigureFogAndAmbient() {
+            RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Trilight;
+            RenderSettings.ambientSkyColor = SkyZenith * AmbientSkyScale;
+            RenderSettings.ambientEquatorColor = SkyHorizon * AmbientEquatorScale;
+            RenderSettings.ambientGroundColor = GroundTint * AmbientGroundScale;
+            RenderSettings.fog = true;
+            RenderSettings.fogMode = FogMode.ExponentialSquared;
+            RenderSettings.fogColor = Fog;
+            RenderSettings.fogDensity = FogDensity;
+            RenderSettings.subtractiveShadowColor = GroundTint;
         }
 
         static Material CreateBaseMaterial() {
@@ -94,13 +174,18 @@ namespace Platformer.PCG {
             var shader = Shader.Find("Skybox/Procedural");
             if (shader == null) return null;
             var sky = new Material(shader) { name = "PCGLabSky" };
+            ApplySkyboxProperties(sky);
+            return sky;
+        }
+
+        public static void ApplySkyboxProperties(Material sky) {
+            if (sky == null) return;
             if (sky.HasProperty("_SkyTint")) sky.SetColor("_SkyTint", SkyHorizon);
             if (sky.HasProperty("_GroundColor")) sky.SetColor("_GroundColor", GroundTint);
-            if (sky.HasProperty("_SunSize")) sky.SetFloat("_SunSize", 0.045f);
-            if (sky.HasProperty("_SunSizeConvergence")) sky.SetFloat("_SunSizeConvergence", 4f);
-            if (sky.HasProperty("_AtmosphereThickness")) sky.SetFloat("_AtmosphereThickness", 1.15f);
-            if (sky.HasProperty("_Exposure")) sky.SetFloat("_Exposure", 1.25f);
-            return sky;
+            if (sky.HasProperty("_SunSize")) sky.SetFloat("_SunSize", 0.055f);
+            if (sky.HasProperty("_SunSizeConvergence")) sky.SetFloat("_SunSizeConvergence", 3.4f);
+            if (sky.HasProperty("_AtmosphereThickness")) sky.SetFloat("_AtmosphereThickness", 1.35f);
+            if (sky.HasProperty("_Exposure")) sky.SetFloat("_Exposure", 1.12f);
         }
 
         public static Texture2D CreateRoundedRect(int width, int height, int radius, Color fill, Color border) {

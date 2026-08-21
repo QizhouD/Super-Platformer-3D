@@ -12,17 +12,19 @@ namespace Platformer {
         [SerializeField, Self] Animator animator;
         [SerializeField, Anywhere] CinemachineFreeLook freeLookVCam;
         [SerializeField, Anywhere] InputReader input;
+        [SerializeField] PlayerFeelConfig feel;
         public InputReader InputReader => input;
         public bool AllowDash => allowDash;
         public bool AllowDoubleJump => allowDoubleJump;
         public float MoveSpeed => moveSpeed;
         public float JumpForce => jumpForce;
         public float JumpDuration => jumpDuration;
-        public float GravityMultiplier => gravityMultiplier;
+        public float GravityMultiplier => FallGravity;
         public float DashForce => dashForce;
         public float DashDuration => dashDuration;
         public event System.Action Jumped;
         public event System.Action Dashed;
+        public event System.Action Landed;
         
         [Header("Movement Settings")]
         [SerializeField] float moveSpeed = 6f;
@@ -33,7 +35,7 @@ namespace Platformer {
         [SerializeField] float jumpForce = 10f;
         [SerializeField] float jumpDuration = 0.5f;
         [SerializeField] float jumpCooldown = 0f;
-        [SerializeField] float gravityMultiplier = 3f;
+        [SerializeField] float gravityMultiplier = 2f;
         //double jump
         [SerializeField] bool allowDoubleJump = false;
         bool hasDoubleJump;
@@ -51,20 +53,29 @@ namespace Platformer {
         [SerializeField] int attackDamage = 10;
 
         const float ZeroF = 0f;
-        const float JumpBuffer = 0.12f;
-        const float MinimumJumpHold = 0.1f;
-        const float StepHeight = 0.45f;
-        
+
         Transform mainCam;
         CapsuleCollider bodyCollider;
         PhysicMaterial noFriction;
-        
+
         float currentSpeed;
         float velocity;
         float jumpVelocity;
         float dashVelocity = 1f;
         float jumpBufferUntil;
         float jumpStartedAt;
+        float ignoreGroundUntil;
+        bool jumpHeld;
+        int jumpsRemaining;
+
+        float JumpBuffer => feel != null ? feel.jumpBuffer : 0.12f;
+        float MinimumJumpHold => feel != null ? feel.minJumpHold : 0.08f;
+        float StepHeight => feel != null ? feel.stepHeight : 0.45f;
+        float JumpCut => feel != null ? feel.jumpCutMultiplier : 0.45f;
+        float RiseGravity => feel != null ? feel.riseGravity : 1f;
+        float FallGravity => feel != null ? feel.fallGravity : 2f;
+        float AirControl => feel != null ? feel.airControl : 0.7f;
+        float AirDrag => feel != null ? feel.airDrag : 0.4f;
 
         Vector3 movement;
 
@@ -88,14 +99,29 @@ namespace Platformer {
             freeLookVCam.OnTargetObjectWarped(transform, transform.position - freeLookVCam.transform.position - Vector3.forward);
             
             rb.freezeRotation = true;
+            rb.useGravity = false;
             rb.interpolation = RigidbodyInterpolation.Interpolate;
             rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
             bodyCollider = GetComponent<CapsuleCollider>();
             ApplyNoFriction();
-            
+            if (feel != null && groundChecker != null)
+                groundChecker.SetCoyoteTime(feel.coyoteTime);
+            allowDoubleJump = true;
+            hasDoubleJump = true;
+            jumpsRemaining = MaxJumps;
+
             SetupTimers();
             SetupStateMachine();
         }
+
+        int MaxJumps => allowDoubleJump ? 2 : 1;
+
+        bool SolidGround =>
+            Time.time >= ignoreGroundUntil
+            && !jumpHeld
+            && jumpVelocity <= 1f
+            && groundChecker != null
+            && groundChecker.IsGrounded;
 
         void SetupStateMachine() {
             // State Machine
@@ -119,13 +145,16 @@ namespace Platformer {
         }
 
         bool ReturnToLocomotionState() {
-            var shouldReturn = groundChecker.IsGrounded
+            var shouldReturn = SolidGround
                                && !attackTimer.IsRunning
                                && !jumpTimer.IsRunning
                                && !dashTimer.IsRunning
                                && rb.velocity.y <= 0.6f;
 
-            if (shouldReturn) hasDoubleJump = true;
+            if (shouldReturn) {
+                hasDoubleJump = allowDoubleJump;
+                jumpsRemaining = MaxJumps;
+            }
             return shouldReturn;
         }
 
@@ -197,8 +226,12 @@ namespace Platformer {
             if (performed) {
                 jumpBufferUntil = Time.time + JumpBuffer;
                 TryConsumeJumpBuffer();
-            } else if (jumpTimer.IsRunning && Time.time - jumpStartedAt >= MinimumJumpHold) {
-                jumpTimer.Stop();
+            } else {
+                jumpHeld = false;
+                if (jumpTimer.IsRunning && Time.time - jumpStartedAt >= MinimumJumpHold) {
+                    jumpTimer.Stop();
+                    if (jumpVelocity > 0f) jumpVelocity *= JumpCut;
+                }
             }
         }
         
@@ -215,6 +248,8 @@ namespace Platformer {
             movement = new Vector3(input.Direction.x, 0f, input.Direction.y);
             TryConsumeJumpBuffer();
             stateMachine.Update();
+            if (groundChecker != null && groundChecker.BecameGrounded)
+                Landed?.Invoke();
 
             HandleTimers();
             UpdateAnimator();
@@ -235,18 +270,22 @@ namespace Platformer {
         }
 
         public void HandleJump() {
-            // If not jumping and grounded, keep jump velocity at 0
-            if (!jumpTimer.IsRunning && groundChecker.IsGrounded) {
+            if (SolidGround && !jumpTimer.IsRunning) {
                 jumpVelocity = ZeroF;
+                jumpsRemaining = MaxJumps;
+                hasDoubleJump = allowDoubleJump;
                 return;
             }
-            
-            if (!jumpTimer.IsRunning) {
-                // Gravity takes over
-                jumpVelocity += Physics.gravity.y * gravityMultiplier * Time.fixedDeltaTime;
-            }
-            
-            // Apply velocity
+
+            var rising = jumpVelocity > 0.01f && jumpHeld;
+            var gravityScale = rising ? RiseGravity : FallGravity;
+            jumpVelocity += Physics.gravity.y * gravityScale * Time.fixedDeltaTime;
+            rb.velocity = new Vector3(rb.velocity.x, jumpVelocity, rb.velocity.z);
+        }
+
+        public void AddVerticalImpulse(float speed) {
+            jumpVelocity = speed;
+            jumpHeld = false;
             rb.velocity = new Vector3(rb.velocity.x, jumpVelocity, rb.velocity.z);
         }
 
@@ -260,17 +299,32 @@ namespace Platformer {
                 SmoothSpeed(adjustedDirection.magnitude);
             } else {
                 SmoothSpeed(ZeroF);
-                rb.velocity = new Vector3(ZeroF, rb.velocity.y, ZeroF);
+                ApplyIdleHorizontal();
             }
         }
 
         void HandleHorizontalMovement(Vector3 direction) {
             var desiredSpeed = ResolveMoveSpeed();
             var desired = direction * desiredSpeed;
-            if (groundChecker.IsGrounded && !jumpTimer.IsRunning)
-                desired = SlideAndStep(desired);
+            var grounded = SolidGround && !jumpTimer.IsRunning;
+            if (grounded) desired = SlideAndStep(desired);
+            else desired = Vector3.Lerp(
+                new Vector3(rb.velocity.x, 0f, rb.velocity.z),
+                desired,
+                AirControl);
 
             rb.velocity = new Vector3(desired.x, rb.velocity.y, desired.z);
+        }
+
+        void ApplyIdleHorizontal() {
+            if (SolidGround) {
+                rb.velocity = new Vector3(ZeroF, rb.velocity.y, ZeroF);
+                return;
+            }
+
+            var horizontal = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+            horizontal = Vector3.MoveTowards(horizontal, Vector3.zero, AirDrag * Time.fixedDeltaTime);
+            rb.velocity = new Vector3(horizontal.x, rb.velocity.y, horizontal.z);
         }
 
         float ResolveMoveSpeed() {
@@ -307,7 +361,7 @@ namespace Platformer {
 
                 var slide = Vector3.ProjectOnPlane(desired, hit.normal);
                 slide.y = 0f;
-                if (slide.sqrMagnitude < 0.01f && groundChecker.IsGrounded)
+                if (slide.sqrMagnitude < 0.01f && SolidGround)
                     rb.position += Vector3.up * 0.06f;
                 return slide;
             }
@@ -342,21 +396,21 @@ namespace Platformer {
 
         void TryConsumeJumpBuffer() {
             if (Time.time > jumpBufferUntil) return;
-            if (jumpTimer.IsRunning || jumpCooldownTimer.IsRunning) return;
+            if (jumpsRemaining <= 0) return;
 
-            if (groundChecker.CanJump) {
-                jumpTimer.Start();
-                jumpStartedAt = Time.time;
-                jumpBufferUntil = 0f;
-                return;
-            }
+            BeginJump();
+            jumpsRemaining--;
+            hasDoubleJump = jumpsRemaining > 0;
+        }
 
-            if (allowDoubleJump && hasDoubleJump) {
-                jumpTimer.Start();
-                jumpStartedAt = Time.time;
-                jumpBufferUntil = 0f;
-                hasDoubleJump = false;
-            }
+        void BeginJump() {
+            if (jumpTimer.IsRunning) jumpTimer.Stop();
+            jumpHeld = true;
+            jumpVelocity = jumpForce;
+            ignoreGroundUntil = Time.time + 0.2f;
+            jumpTimer.Start();
+            jumpStartedAt = Time.time;
+            jumpBufferUntil = 0f;
         }
 
         void ApplyNoFriction() {
@@ -381,6 +435,8 @@ namespace Platformer {
         public void EnableDoubleJump()
         {
             allowDoubleJump = true;
+            hasDoubleJump = true;
+            jumpsRemaining = MaxJumps;
             UINotification.ShowNotification("Double Jump Ability Unlocked!");
             Debug.Log("doubleJump unlock！");
         }
@@ -395,7 +451,8 @@ namespace Platformer {
         public void SetTraversalAbilities(bool doubleJumpEnabled, bool dashEnabled) {
             allowDoubleJump = doubleJumpEnabled;
             allowDash = dashEnabled;
-            if (!allowDoubleJump) hasDoubleJump = false;
+            hasDoubleJump = allowDoubleJump;
+            jumpsRemaining = MaxJumps;
         }
 
     }

@@ -8,9 +8,11 @@ or sits next to gameplay assets.
 |---|---|
 | [agents.md](agents.md) | Architecture, namespaces, conventions for coding agents |
 | [pcg.md](pcg.md) | PCG Lab generation, reachability, training contract |
+| [pcg-lab-scene.md](pcg-lab-scene.md) | Current `PCG_Lab` scene dump: hierarchy, scripts, serialized values |
 | [training.md](training.md) | ML-Agents Python trainer setup |
 | [changelog.md](changelog.md) | Feature history |
 | [grok-handoff.md](grok-handoff.md) | Unity CLI / Grok handoff notes |
+| [level-design.md](level-design.md) | Feel principles, first blockout, Imagine prompts |
 
 Root `README.md` is the repository landing page. `AGENTS.md` at the repo root
 points here so agent tools still discover the project guide.

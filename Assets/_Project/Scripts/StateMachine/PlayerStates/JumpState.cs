@@ -13,6 +13,4 @@ namespace Platformer {
             player.HandleMovement();
         }
     }
-    
-    namespace Platformer { }
 }

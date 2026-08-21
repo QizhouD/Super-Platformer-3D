@@ -2,6 +2,14 @@
 
 ## [Unreleased] - 2026-08-20
 
+### Added
+
+- Player feel config: coyote 0.1s, jump buffer 0.12s, jump-cut, rise/fall gravity, air momentum.
+- Modular platforms: path-moving, bouncy, crumbling, rotating.
+- Collectible definitions (coin + unique landmark), feel feedback, authored checkpoints.
+- Level-design notes and Imagine prompts in `docs/level-design.md`.
+- Editor menu `Platformer/Level Tools` for grid snap and ground cubes.
+
 ### Changed
 
 - Moved project markdown into `docs/` and stopped tracking WebGL builds, Blender

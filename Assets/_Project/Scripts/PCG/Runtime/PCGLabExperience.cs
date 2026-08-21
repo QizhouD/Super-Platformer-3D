@@ -46,6 +46,7 @@ namespace Platformer.PCG {
         void Awake() {
             if (panel == null) panel = GetComponent<PCGDebugPanel>();
             Bind(panel);
+            ApplyWorld();
         }
 
         void OnEnable() {
@@ -111,19 +112,11 @@ namespace Platformer.PCG {
                 audio.Configure();
             }
 
-            if (hud == null) {
-                hud = gameObject.GetComponent<PCGLabHud>();
-                if (hud == null) hud = gameObject.AddComponent<PCGLabHud>();
-                hud.Configure(
-                    panel,
-                    generator,
-                    runController,
-                    telemetry,
-                    difficultyDirector,
-                    observationSensor,
-                    datasetRecorder,
-                    TrainingController);
-            }
+            if (panel != null) panel.HideLegacyGui = true;
+            var existingHud = GetComponent<PCGLabHud>();
+            if (existingHud != null) existingHud.enabled = false;
+            var leftover = transform.Find("PCG Lab HUD");
+            if (leftover != null) leftover.gameObject.SetActive(false);
         }
 
         void HandleGenerationFinished(GeneratedLevelManifest manifest) {
