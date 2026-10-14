@@ -394,6 +394,9 @@ namespace Platformer {
 
         void TryConsumeJumpBuffer() {
             if (Time.time > jumpBufferUntil) return;
+            // Walking off a ledge forfeits the ground jump once coyote time runs out.
+            if (jumpsRemaining == MaxJumps && groundChecker != null && !groundChecker.CanJump)
+                jumpsRemaining--;
             if (jumpsRemaining <= 0) return;
 
             BeginJump();
