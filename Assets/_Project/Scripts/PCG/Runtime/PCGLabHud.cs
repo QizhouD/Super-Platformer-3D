@@ -208,9 +208,9 @@ namespace Platformer.PCG {
             }
         }
 
+        // Unity 2022.2+ throws for the removed built-in Arial.ttf instead of returning null.
         static Font ResolveFont() {
-            return Resources.GetBuiltinResource<Font>("Arial.ttf") ??
-                   Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf") ??
+            return Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf") ??
                    Font.CreateDynamicFontFromOSFont(new[] { "Arial", "Segoe UI", "Helvetica", "Liberation Sans" }, 16);
         }
 

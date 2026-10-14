@@ -112,11 +112,19 @@ namespace Platformer.PCG {
                 audio.Configure();
             }
 
-            if (panel != null) panel.HideLegacyGui = true;
-            var existingHud = GetComponent<PCGLabHud>();
-            if (existingHud != null) existingHud.enabled = false;
-            var leftover = transform.Find("PCG Lab HUD");
-            if (leftover != null) leftover.gameObject.SetActive(false);
+            if (hud == null) {
+                hud = gameObject.GetComponent<PCGLabHud>();
+                if (hud == null) hud = gameObject.AddComponent<PCGLabHud>();
+                hud.Configure(
+                    panel,
+                    generator,
+                    runController,
+                    telemetry,
+                    difficultyDirector,
+                    observationSensor,
+                    datasetRecorder,
+                    TrainingController);
+            }
         }
 
         void HandleGenerationFinished(GeneratedLevelManifest manifest) {
