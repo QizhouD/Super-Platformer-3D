@@ -9,7 +9,6 @@ public sealed class PCGPlayerAbilityBridge : MonoBehaviour {
     void Awake() {
         if (playerController == null) playerController = GetComponent<PlayerController>();
         input = playerController != null ? playerController.InputReader : null;
-        playerController?.SetTraversalAbilities(true, playerController.AllowDash);
         SyncTraversalToGenerator();
     }
 

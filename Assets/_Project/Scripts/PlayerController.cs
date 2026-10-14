@@ -106,8 +106,6 @@ namespace Platformer {
             ApplyNoFriction();
             if (feel != null && groundChecker != null)
                 groundChecker.SetCoyoteTime(feel.coyoteTime);
-            allowDoubleJump = true;
-            hasDoubleJump = true;
             jumpsRemaining = MaxJumps;
 
             SetupTimers();
