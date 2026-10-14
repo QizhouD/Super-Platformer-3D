@@ -3,6 +3,8 @@
 > 数据来源：Unity MCP 实时查询（`manage_scene` / `find_gameobjects` / `execute_code` SerializedObject / `manage_camera` / `read_console` / `manage_script`）。
 > 采样时刻：Unity Editor **未进入 Play Mode**（`playing=False`，`paused=False`）。场景有未保存修改。
 > 引擎：Unity **2022.3.2f1**，产品名 `Platformer`，公司 `DefaultCompany`。
+>
+> **2026-10-14 更新：** 本文是 2026-08-21 的编辑器快照，正文未重新采样。第 7 节第 2、3 条已经修复：`PCG_Lab` 通过 prefab override 禁用了 `ResetPlayer`，代码也不再强制打开能力，双跳和冲刺默认都是关的。第 8.6 节里的 16 个 chunk、检查点、双重生竞争和 Lab HUD 已在 Play Mode 中验证；双重生竞争的实际表现是一次掉落触发多次重生，也已修复（见 `docs/changelog.md`）。
 
 ---
 
@@ -314,7 +316,7 @@ Awake 后备：`FindObjectOfType` 补引用。
 | attackDistance | 1 |
 | attackDamage | 10 |
 
-**源码硬编码（与 Inspector 不一致）：** `Awake()` 内 `allowDoubleJump = true; hasDoubleJump = true;`。`PCGPlayerAbilityBridge.Awake()` 再调用 `SetTraversalAbilities(true, AllowDash)`。`PlayerFeelConfig.startWithDoubleJump=False` 注释写明不被跳跃次数使用。
+**源码硬编码（与 Inspector 不一致）：** `Awake()` 内 `allowDoubleJump = true; hasDoubleJump = true;`。`PCGPlayerAbilityBridge.Awake()` 再调用 `SetTraversalAbilities(true, AllowDash)`。`PlayerFeelConfig.startWithDoubleJump=False` 注释写明不被跳跃次数使用。（2026-10-14 已删除这两处强制。）
 
 C# 事件：`Jumped`、`Dashed`、`Landed`。
 
@@ -538,10 +540,10 @@ PCG System
    `isDirty=True`。交接或切场景会丢未保存改动。
 
 2. **双重生系统冲突**
-   `PCGRunController.fallThreshold=-12`（检查点重生）与 `ResetPlayer.fallThreshold=-20`（出生点）同时 `Update`。先触发的是 -12 的 PCG 路径；若 PCG 引用丢失，-20 会把玩家拉回 `Start` 时位置，绕过检查点。建议本场景禁用 `ResetPlayer`。
+   `PCGRunController.fallThreshold=-12`（检查点重生）与 `ResetPlayer.fallThreshold=-20`（出生点）同时 `Update`。先触发的是 -12 的 PCG 路径；若 PCG 引用丢失，-20 会把玩家拉回 `Start` 时位置，绕过检查点。建议本场景禁用 `ResetPlayer`。（2026-10-14 已禁用。）
 
 3. **Inspector 能力开关被代码覆盖**
-   `PlayerController` Inspector：`allowDoubleJump=False`，`allowDash=False`；`LevelGenerator.hasDoubleJump=False`。但 `PlayerController.Awake` 强制 `allowDoubleJump=true`，`PCGPlayerAbilityBridge.Awake` 再 `SetTraversalAbilities(true, AllowDash)`。实验室默认实际是双跳开启、冲刺关闭。文档/HUD 若按 Inspector 理解会错。
+   `PlayerController` Inspector：`allowDoubleJump=False`，`allowDash=False`；`LevelGenerator.hasDoubleJump=False`。但 `PlayerController.Awake` 强制 `allowDoubleJump=true`，`PCGPlayerAbilityBridge.Awake` 再 `SetTraversalAbilities(true, AllowDash)`。实验室默认实际是双跳开启、冲刺关闭。文档/HUD 若按 Inspector 理解会错。（2026-10-14 已删除这两处强制。）
 
 4. **`PCGPlayerAbilityBridge.playerController` 未序列化**
    当前为 null，运行时 GetComponent 能工作，但丢失组件时不会在编辑器暴露。

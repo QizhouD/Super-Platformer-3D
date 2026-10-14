@@ -1,5 +1,34 @@
 # Changelog
 
+## [Unreleased] - 2026-10-14
+
+### Fixed
+
+- Double Jump and Dash start off again in every scene. The 2026-08-21 scene update
+  forced double jump on in `PlayerController` and `PCGPlayerAbilityBridge`, so the
+  player no longer matched the HUD toggle, the generator's ability profile, or the
+  tutorial pickups.
+- Walking off a ledge forfeits the ground jump once coyote time runs out, instead of
+  leaving an extra air jump.
+- A fall in PCG_LAB counts as one respawn. `PCGRunController` read the interpolated
+  transform, which lags a Rigidbody teleport until the next physics step, so one fall
+  could respawn several times and inflate reset counts, telemetry, dataset events,
+  adaptive difficulty, and agent rewards.
+- The PCG Lab HUD builds again. Unity 2022.3 throws for the removed built-in
+  `Arial.ttf`, so the HUD fell back to the legacy panel, and the 2026-08-21 update then
+  hid all lab UI. The HUD now uses `LegacyRuntime.ttf`.
+- `ResetPlayer` is disabled on the Player 2 instance in `PCG_Lab` only, so
+  `PCGRunController` owns respawns there.
+
+### Changed
+
+- `Platformer > PCG > Create First Batch` no longer runs when the project is opened
+  from a new path; it only runs from the menu or batch mode.
+- Ignored `*.unitypackage.meta` and removed the orphan meta of the untracked
+  polyperfect URP package.
+- README states that no ML-Agents policy has been trained yet, shows the PCG_LAB HUD,
+  and counts 39 EditMode tests.
+
 ## [Unreleased] - 2026-08-20
 
 ### Added

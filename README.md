@@ -4,7 +4,7 @@ A third-person 3D platformer on **Unity 2022.3.2f1** / URP 14. The main line of 
 
 1. **Procedural levels** — deterministic seeds, reachability, and rhythm
 2. **Player modeling** — skill estimates, behavior labels, and a multimodal dataset
-3. **ML-Agents navigation** — the same Player 2 controller, driven through an external InputReader channel; the PPO stack is wired and a baseline run is next
+3. **ML-Agents navigation** — the same Player 2 controller, driven through an external InputReader channel; the PPO stack is wired, but no policy has been trained yet
 
 Hand-authored `Level_Tutorial` and `Level_1` remain as the gameplay baseline and as visual reference for PCG chunks.
 
@@ -16,13 +16,15 @@ Hand-authored `Level_Tutorial` and `Level_1` remain as the gameplay baseline and
 |---|---|
 | PCG_LAB | Playable. Default seed `82431`, 16 chunks, checkpoints, respawn, HUD |
 | Player modeling | Live. Online skill estimate, 20-D observation, behavior labels, JSONL + 84x84 frames |
-| ML-Agents | **Pipeline ready; baseline policy in progress.** Agent, rewards, PPO yaml, and Python 3.9 trainer are in place. A published pass-rate table is the next deliverable |
+| ML-Agents | **Pipeline ready; no trained policy yet.** Agent, rewards, PPO yaml, and Python 3.9 trainer pins are in place. The first PPO baseline and a pass-rate table are the next step |
 
 ---
 
 ## PCG_LAB
 
 Scene: [`Assets/_Project/Scenes/PCG_Lab.unity`](Assets/_Project/Scenes/PCG_Lab.unity)
+
+<img src="docs/images/pcg-lab-hud.png" alt="PCG_LAB at seed 82431 with the lab HUD" width="520">
 
 ```text
 Play
@@ -40,7 +42,7 @@ Play
 - Rhythm: Start → Easy → Normal → Challenge → Recovery → Reward
 - Adaptive difficulty uses checkpoint time and respawns to retune moving/timed platforms and bias the next layout by `-0.2…+0.2`
 
-Controls: WASD move, Space jump, Shift dash, hold RMB to look. The top-left HUD changes seed, toggles Double Jump / Dash, switches training mode, and records datasets.
+Controls: WASD move, Space jump, Shift dash, hold RMB to look. The top-left HUD changes seed, toggles Double Jump / Dash, switches training mode, and records datasets. Double Jump and Dash start off; a toggle applies to the player at once and to the route on the next GENERATE.
 
 Full rules: [docs/pcg.md](docs/pcg.md).
 
@@ -149,7 +151,7 @@ docs/                    project documentation
 | `PCGMultimodalDatasetRecorder` | player-behavior dataset |
 | `PCGNavigationAgent` | ML-Agents policy |
 
-EditMode tests live under `Assets/_Project/Tests/PCG/` (36 tests). Play Mode is the primary smoke test.
+EditMode tests live under `Assets/_Project/Tests/PCG/` (39 tests). Play Mode is the primary smoke test.
 
 ---
 

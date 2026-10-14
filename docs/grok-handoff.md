@@ -1,6 +1,31 @@
 # Grok + Unity CLI 项目交付文档
 
-## 交付状态
+## 最新状态（2026-10-14）
+
+这一轮收尾在 Jim 的台式机上用 Unity 2022.3.2f1 完成。改了什么、为什么改，见 `docs/changelog.md` 的 2026-10-14 条目。
+
+已验证：
+
+- 编译通过。`Platformer.PCG.Tests` 的 39 个 EditMode 测试全部通过（batchmode，XML 留在本机 `Logs/`，不入库）。
+- `PCG_Lab` Play Mode：默认种子生成 16 个 chunk，检查点和重生正常，每次掉落只重生一次；HUD 能正常构建，开关和按钮会同步到 `PCGDebugPanel`、生成器和玩家。
+- 其他场景 Play Mode：`Level_Tutorial` 拾取道具后解锁双跳和冲刺，`Level_1` 两种能力默认开启，Main Menu 和 VictoryScene 没有报错。
+- 没有做 WebGL build，也没有训练 PPO。
+
+已知但没修的旧问题（都早于这一轮）：
+
+- `Level_Tutorial` 和 `Level_1` 里 `ScoreUI` 报 NullReferenceException，因为场景里没有 `GameManager`。
+- `Level_1` 的 `NavMeshBaker.Start` 报 NullReferenceException，因为 `platforms` 数组里有空元素。
+- `Assets/_Project/NavMeshComponents-master` 与官方 AI Navigation 包重复，启动时报 NavMesh 菜单项重名。它自带的 26 个 EditMode 测试在当前目录结构下找不到测试场景，会全部失败。
+- `Assets/MyTools/Editor/Setup.cs` 有 UDR0001 警告。
+- 没有 trainer 监听时，ML-Agents 会报 gRPC 连接异常，这是正常现象。
+- 这份 clone 里没有 `.venv-mlagents`，也没有训练结果。训练前先按 `docs/training.md` 建环境。
+
+用 MCP for Unity 操作 Editor 时：
+
+- `MCPForUnity.UseHttpTransport` 是全局 EditorPref，LLM-NPC 项目也在用，不要改。要在本项目走 stdio，启动 Editor 时加 `-executeMethod MCPForUnity.Editor.Services.Transport.Transports.StdioBridgeHost.StartAutoConnect`。
+- 每次脚本重新编译后 stdio 桥都会断开，而且不会自动恢复，需要用同样的参数重启 Editor。
+
+## 交付状态（2026-08-19 原始交付）
 
 - 交付日期：2026-08-19
 - 仓库：`https://github.com/QizhouD/Super-Platformer-3D.git`
@@ -36,7 +61,7 @@
 - PCG 命名空间与程序集：`Platformer.PCG`
 - PCG EditMode 测试程序集：`Platformer.PCG.Tests`
 
-当前机器的 PATH 和常见 Unity Hub 安装目录中没有检测到 `Unity.exe`，也没有正在运行的 Unity Editor。接手环境需要先定位或安装精确版本的 Editor；不要默认使用更高版本升级项目。
+Jim 台式机上的 Editor 在 `D:\unity eiditor\Unity 2022.3.2f1\Editor\Unity.exe`，不在 PATH 里。其他机器需要先定位或安装同一版本的 Editor；不要默认使用更高版本升级项目。
 
 ## 当前可运行成果
 
@@ -67,7 +92,7 @@
 - 生成保持确定性、能力过滤、可达性过滤、类别连续限制和碰撞检查
 - `Platformer > PCG > Create First Batch` 可重建生成资源和实验场景
 
-不要在生成的 prefab、data asset 或 `PCG_Lab.unity` 有需要保留的手工修改时运行重建命令；`PCGProjectBootstrap` 会覆盖这些资源。
+不要在生成的 prefab、data asset 或 `PCG_Lab.unity` 有需要保留的手工修改时运行重建命令；`PCGProjectBootstrap` 会覆盖这些资源。打开项目时它不会自动运行。
 
 ### Game AI 与训练
 
@@ -82,7 +107,7 @@
 - checkpoint、通关、死亡、时间和靠近目标奖励；
 - `PCGNavigation` Behavior Name；
 - Decision Period 为 5；
-- Debug Panel 可切换 `HeuristicOnly` 与训练用 `Default`。
+- 左上角 Lab HUD 可切换 `HeuristicOnly` 与训练用 `Default`。
 
 附加能力：
 
@@ -106,76 +131,66 @@
 | `Assets/_Project/Scripts/PCGNavigationAgent.cs` | ML-Agents Agent、动作和奖励 |
 | `Assets/_Project/Scripts/Input/InputReader.cs` | 人类输入与外部策略输入复用 |
 | `Assets/_Project/Scripts/Editor/PCGProjectBootstrap.cs` | 生成资源和 PCG_Lab 的 Editor 入口 |
-| `Assets/_Project/Tests/PCG/Editor/PCGCoreTests.cs` | 26 个 PCG EditMode 测试 |
+| `Assets/_Project/Tests/PCG/Editor/` | 39 个 PCG EditMode 测试（Core 26、Generation 5、Presentation 8） |
 
 ## Unity CLI 工作流
 
-以下命令使用 PowerShell。先将 `$UnityExe` 改为实际的 `2022.3.2f1` 路径。Unity 同一项目不能同时被普通 Editor 和 batchmode 实例打开，因此执行前关闭该项目的 Editor。
+以下命令使用 PowerShell。Unity 同一项目不能同时被普通 Editor 和 batchmode 实例打开，因此执行前关闭该项目的 Editor。
+
+Unity.exe 是 GUI 子系统程序，在 PowerShell 里用 `& $UnityExe` 调用会立即返回，`$LASTEXITCODE` 不反映运行结果，所以下面统一用 `Start-Process -Wait -PassThru`。`Start-Process` 不会给参数加引号，项目路径和日志路径不能含空格。
 
 ```powershell
-$ProjectPath = (Resolve-Path 'D:\unity-game\3D-Platformer').Path
-$UnityExe = 'C:\Program Files\Unity\Hub\Editor\2022.3.2f1\Editor\Unity.exe'
+$ProjectPath = 'D:\desktop\DQZ\phd\code\Super-Platformer-3D'
+$UnityExe = 'D:\unity eiditor\Unity 2022.3.2f1\Editor\Unity.exe'  # Jim's desktop；其他机器按实际路径改
 $LogPath = Join-Path $ProjectPath 'Logs'
 New-Item -ItemType Directory -Force $LogPath | Out-Null
 
 if (-not (Test-Path $UnityExe)) {
     throw "Unity 2022.3.2f1 not found: $UnityExe"
 }
+
+function Invoke-Unity([string[]] $UnityArgs) {
+    $p = Start-Process -FilePath $UnityExe -ArgumentList $UnityArgs -Wait -PassThru
+    return $p.ExitCode
+}
 ```
 
 ### 1. 导入并检查编译
 
 ```powershell
-& $UnityExe `
-  -batchmode `
-  -quit `
-  -accept-apiupdate `
-  -projectPath $ProjectPath `
-  -logFile (Join-Path $LogPath 'grok-import.log')
-
-if ($LASTEXITCODE -ne 0) {
-    throw "Unity import/compile failed with exit code $LASTEXITCODE"
-}
+$code = Invoke-Unity @('-batchmode', '-quit', '-projectPath', $ProjectPath,
+    '-logFile', (Join-Path $LogPath 'import.log'))
+if ($code -ne 0) { throw "Unity import/compile failed with exit code $code" }
 ```
 
-随后检查 `Logs/grok-import.log` 中是否出现编译错误。不要使用 `-ignorecompilererrors`。
+随后检查 `Logs/import.log` 中是否出现编译错误。不要使用 `-ignorecompilererrors`。Editor 版本和项目一致时不需要 `-accept-apiupdate`，加上它会允许 API Updater 静默改写脚本。
+
+新 clone 没有 `Library/`，第一次导入要从 Unity 包源和 GitHub 下载依赖。走本机代理时，下载可能卡住而不报错，可以看 `%LOCALAPPDATA%\Unity\Editor\upm.log`：如果某个包长时间停在 `Downloading package`，或 git 包报 `RPC failed`，就结束这个 Unity 进程、删掉 `Temp/` 再重试。已经下载的包会留在全局缓存里，不用重下。
 
 ### 2. 运行 PCG EditMode 测试
 
 ```powershell
 $TestResults = Join-Path $LogPath 'pcg-editmode-results.xml'
-
-& $UnityExe `
-  -runTests `
-  -batchmode `
-  -projectPath $ProjectPath `
-  -testPlatform EditMode `
-  -assemblyNames 'Platformer.PCG.Tests' `
-  -testResults $TestResults `
-  -logFile (Join-Path $LogPath 'pcg-editmode.log')
+$code = Invoke-Unity @('-runTests', '-batchmode', '-projectPath', $ProjectPath,
+    '-testPlatform', 'EditMode', '-assemblyNames', 'Platformer.PCG.Tests',
+    '-testResults', $TestResults, '-logFile', (Join-Path $LogPath 'pcg-editmode.log'))
 
 if (-not (Test-Path $TestResults)) {
     throw 'Unity did not write the NUnit test result XML.'
 }
 ```
 
-必须读取 XML 和日志确认总数、失败数与错误堆栈，不要只依赖进程退出码。最后一次记录在 `docs/changelog.md` 的结果是 26 passed、0 failed，但本次交付环境因为找不到 Unity executable，没有重新运行测试。
+必须读取 XML 和日志确认总数、失败数与错误堆栈，不要只依赖进程退出码。2026-10-14 的结果是 39 passed、0 failed。不要去掉 `-assemblyNames`，否则会连带运行 `NavMeshComponents-master` 自带的 26 个测试，它们在当前目录结构下必然失败，退出码会变成 2。
 
 ### 3. 有意重建 PCG 资源
 
 仅在确认允许覆盖生成资源后执行：
 
 ```powershell
-& $UnityExe `
-  -batchmode `
-  -accept-apiupdate `
-  -projectPath $ProjectPath `
-  -executeMethod PCGProjectBootstrap.CreateFirstBatchBatchMode `
-  -logFile (Join-Path $LogPath 'pcg-bootstrap.log')
-
-if ($LASTEXITCODE -ne 0) {
-    throw "PCG bootstrap failed with exit code $LASTEXITCODE"
-}
+$code = Invoke-Unity @('-batchmode', '-projectPath', $ProjectPath,
+    '-executeMethod', 'PCGProjectBootstrap.CreateFirstBatchBatchMode',
+    '-logFile', (Join-Path $LogPath 'pcg-bootstrap.log'))
+if ($code -ne 0) { throw "PCG bootstrap failed with exit code $code" }
 ```
 
 该静态方法自己调用 `EditorApplication.Exit(0)`。运行后必须检查 Git diff，确认场景、prefab、data asset 和 Build Settings 的变化都是预期的。
@@ -189,25 +204,23 @@ if ($LASTEXITCODE -ne 0) {
 mlagents-learn Training\pcg_navigation_ppo.yaml --run-id=pcg-navigation-v1
 ```
 
-Trainer 开始监听后，在 Unity Editor 中打开 `PCG_Lab.unity`、进入 Play Mode，并在左上角 Debug Panel 启用 `ML-Agents Training Mode`。当前流程依赖交互式 Editor，不是完全 headless 的训练 Player 流程。
+Trainer 开始监听后，在 Unity Editor 中打开 `PCG_Lab.unity`、进入 Play Mode，并在左上角 HUD 的 LAB TOOLS 里启用 `ML-Agents Training Mode`。当前流程依赖交互式 Editor，不是完全 headless 的训练 Player 流程。
 
 ## 验证边界与已知缺口
 
-- 本次只完成 Git 收口和交付文档，没有修改或重新验证玩法代码。
-- 当前环境未找到 Unity CLI，因此没有新的编译、EditMode、Play Mode 或 WebGL build 结果。
+- 2026-10-14 的验证范围见文首「最新状态」：编译、39 个 EditMode 测试和五个场景的 Play Mode 检查，没有 WebGL build 结果。
 - 仓库没有 CI 配置。
-- 仓库中未找到调用 `BuildPipeline.BuildPlayer` 的 Editor 构建方法；`docs/agents.md` 中的 WebGL CLI 命令仍含 `<buildmethod>` 占位符。要稳定执行 WebGL CLI 构建，需先实现一个 Editor-only 静态构建入口，并让失败通过异常或非零 `EditorApplication.Exit` 返回。
+- 仓库中未找到调用 `BuildPipeline.BuildPlayer` 的 Editor 构建方法，WebGL 目前只能从 File > Build Settings 手动构建。要稳定执行 WebGL CLI 构建，需先实现一个 Editor-only 静态构建入口，并让失败通过异常或非零 `EditorApplication.Exit` 返回。
 - 当前自动化测试只有 PCG EditMode 程序集；场景内输入、视觉 sensor、dataset 文件 I/O、完整 episode 和训练通讯仍主要依赖 Play Mode smoke test。
 - `Application.persistentDataPath/PCGDatasets/` 是运行时数据输出，不应提交到仓库。
 - `.claude/settings.local.json` 是机器专用权限文件，已忽略，不要强制添加。
 
 ## 建议的继续开发顺序
 
-1. 在精确 Unity 版本上执行导入和 26 个 EditMode 测试，保存 XML 与日志结果。
-2. 打开 `PCG_Lab` 做最小 Play Mode smoke test：默认种子生成 16 个 chunk、角色移动/跳跃/冲刺、checkpoint/重生、训练模式切换和 Console 无新增错误。
-3. 如果主要目标是 Unity CLI 自动化，先增加可测试的 WebGL batch build 入口，再将 import、EditMode tests 和 build 固化为脚本或 CI。
-4. 如果主要目标是 Game AI，先训练一个可复现 PPO baseline，记录 run-id、种子集合、通关率、平均 checkpoint、episode return 和重生次数，再调整奖励或网络。
-5. 为完整 episode、视觉 sensor 和 dataset recorder 增加 PlayMode 覆盖，避免只靠手工烟雾测试。
+1. 修掉主线关卡里早就存在的两个 NullReferenceException：`ScoreUI` 缺 `GameManager`，`Level_1` 的 `NavMeshBaker.platforms` 有空元素。
+2. 如果主要目标是 Unity CLI 自动化，先增加可测试的 WebGL batch build 入口，再将 import、EditMode tests 和 build 固化为脚本或 CI。
+3. 如果主要目标是 Game AI，先按 `docs/training.md` 建好 `.venv-mlagents`，训练一个可复现 PPO baseline，记录 run-id、种子集合、通关率、平均 checkpoint、episode return 和重生次数，再调整奖励或网络。
+4. 为完整 episode、视觉 sensor 和 dataset recorder 增加 PlayMode 覆盖，避免只靠手工烟雾测试。
 
 ## 修改时必须保持的契约
 
@@ -222,7 +235,7 @@ Trainer 开始监听后，在 Unity Editor 中打开 `PCG_Lab.unity`、进入 Pl
 ## 可直接交给 Grok 的启动提示
 
 ```text
-你正在接手 D:\unity-game\3D-Platformer。先阅读 docs/agents.md、docs/grok-handoff.md、
+你正在接手 D:\desktop\DQZ\phd\code\Super-Platformer-3D。先阅读 docs/agents.md、docs/grok-handoff.md、
 docs/pcg.md、docs/training.md、docs/changelog.md，以及
 .claude/skills/unity-style-guide/SKILL.md。不要假设 Unity CLI、构建入口或测试已经可用；
 先定位 Unity 2022.3.2f1，运行 import/compile 和 Platformer.PCG.Tests，并报告 XML 与日志结果。

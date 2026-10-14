@@ -131,7 +131,9 @@ heuristic control and trainer control.
 
 ## Regenerate assets
 
-Use `Platformer > PCG > Create First Batch`.
+Use `Platformer > PCG > Create First Batch`, or
+`-executeMethod PCGProjectBootstrap.CreateFirstBatchBatchMode` in batch mode.
+Opening the project never runs it.
 
 This command recreates the generated prefabs, data assets, configuration and lab
 scene. Do not use it after manually editing generated assets unless overwriting those
@@ -139,7 +141,7 @@ changes is intended.
 
 ## Tests
 
-The `Platformer.PCG.Tests` EditMode assembly currently contains 36 tests covering:
+The `Platformer.PCG.Tests` EditMode assembly currently contains 39 tests covering:
 
 - deterministic random sequences and chunk selection;
 - ability and minimum-progress filtering;
