@@ -44,7 +44,10 @@ namespace Platformer.PCG {
         }
 
         void Update() {
-            if (player != null && player.position.y < fallThreshold) Respawn();
+            if (player == null) return;
+            // The transform lags a teleport until the next physics step; reading it re-triggers Respawn.
+            var height = playerBody != null ? playerBody.position.y : player.position.y;
+            if (height < fallThreshold) Respawn();
         }
 
         public void Configure(Transform labPlayer, Transform spawn) {
