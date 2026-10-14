@@ -21,35 +21,11 @@ public static class PCGProjectBootstrap {
     const string PlayerPrefabPath = "Assets/_Project/Prefabs/Player 2.prefab";
     const string InputReaderPath = "Assets/_Project/ScriptableObjects/InputReader.asset";
     const string ScenePath = "Assets/_Project/Scenes/PCG_Lab.unity";
-    const int BootstrapVersion = 12;
     const float LabCameraSensitivity = 2f;
     const float HorizontalLayoutScale = 1.25f;
     const float PlatformFootprintScale = 1.05f;
     const string TutorialGroundMaterialPath = "Assets/_Project/_Shaders/NoiseGround.mat";
     const string TutorialTimedMaterialPath = "Assets/_Project/Materials/TimedPlatform.mat";
-
-    static string BootstrapVersionKey =>
-        $"Platformer.PCG.Bootstrap.{Application.dataPath.GetHashCode()}";
-
-    [InitializeOnLoadMethod]
-    static void ScheduleFirstRun() {
-        if (Application.isBatchMode) return;
-        if (EditorPrefs.GetInt(BootstrapVersionKey, 0) >= BootstrapVersion &&
-            AssetDatabase.LoadAssetAtPath<LevelGenerationConfig>(ConfigPath) != null &&
-            AssetDatabase.LoadAssetAtPath<SceneAsset>(ScenePath) != null) return;
-
-        EditorApplication.update -= TryRunFirstBatch;
-        EditorApplication.update += TryRunFirstBatch;
-    }
-
-    static void TryRunFirstBatch() {
-        if (EditorApplication.isCompiling ||
-            EditorApplication.isUpdating ||
-            EditorApplication.isPlayingOrWillChangePlaymode) return;
-
-        EditorApplication.update -= TryRunFirstBatch;
-        CreateFirstBatch();
-    }
 
     [MenuItem("Platformer/PCG/Create First Batch")]
     public static void CreateFirstBatch() {
@@ -157,7 +133,6 @@ public static class PCGProjectBootstrap {
         CreateLabScene(config);
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
-        EditorPrefs.SetInt(BootstrapVersionKey, BootstrapVersion);
         Debug.Log($"PCG first batch created. Open {ScenePath} and press Play.");
     }
 
