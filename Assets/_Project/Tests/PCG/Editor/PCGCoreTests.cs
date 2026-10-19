@@ -493,6 +493,39 @@ namespace Platformer.PCG.Tests {
             Assert.That(secondManifest, Is.EqualTo(firstManifest));
         }
 
+        [Test]
+        public void GeneratedLibrary_PlayerSyncedReachAvoidsSafeFallbackWithoutAbilities() {
+            var config = AssetDatabase.LoadAssetAtPath<LevelGenerationConfig>(
+                "Assets/_Project/PCG/LevelGenerationConfig.asset");
+            Assert.That(config, Is.Not.Null, "Run Platformer/PCG/Create First Batch before this integration test.");
+
+            var system = new GameObject("PCG Player Reach Test");
+            cleanup.Add(system);
+            var anchor = new GameObject("Start Anchor").transform;
+            anchor.SetParent(system.transform);
+            var output = new GameObject("Output").transform;
+            output.SetParent(system.transform);
+
+            // Player 2 in PCG_Lab: moveSpeed 300, jumpForce 10, jumpDuration 0.5,
+            // fall gravity 2, dashForce 5, dashDuration 1.
+            var reach = PCGPlayerReachModel.FromJumpProfile(
+                300f, 10f, 0.5f, 2f, 5f, 1f, config.ReachSafetyFactor);
+            var generator = system.AddComponent<LevelGenerator>();
+            generator.SetTraversalCapabilities(reach);
+            generator.SetCapabilities(false, false);
+
+            foreach (var seed in new[] { 82431, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }) {
+                generator.Configure(config, anchor, output, seed);
+                generator.Generate();
+
+                Assert.That(generator.LastManifest.completed, Is.True, generator.LastManifest.failureReason);
+                Assert.That(generator.LastManifest.chunks, Has.Count.EqualTo(16));
+                var fallback = generator.LastManifest.chunks.Find(record => record.safeFallback);
+                Assert.That(fallback, Is.Null,
+                    $"Seed {seed} used the safe fallback at chunk {fallback?.index}.");
+            }
+        }
+
         PlatformChunkData CreateData(
             string id,
             AbilityRequirement requirement,

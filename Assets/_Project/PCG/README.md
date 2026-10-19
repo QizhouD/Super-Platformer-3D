@@ -66,7 +66,10 @@ contains a telegraphed platform cycling through visible, warning, and hidden sta
 The spatial grammar limits consecutive flat and straight chunks to three. Turn,
 lateral-offset, climb, descent, and combined climb-turn chunks are selected when a
 path would otherwise become repetitive. Relative elevation is constrained to
-`-4m...+8m` to prevent runaway vertical layouts. Horizontal platform placement is
+`-4m...+8m` to prevent runaway vertical layouts. The flat/straight limits are
+preferences: when ability and reach filters leave no chunk that changes elevation or
+direction, the generator relaxes them before using the safe fallback. Manifest records
+mark safe-fallback chunks with `safeFallback`. Horizontal platform placement is
 scaled by `1.25x`, while platform footprints are scaled by `1.05x`, producing wider
 gaps and a larger overall play area without exceeding the configured traversal model.
 
@@ -141,7 +144,7 @@ changes is intended.
 
 ## Tests
 
-The `Platformer.PCG.Tests` EditMode assembly currently contains 39 tests covering:
+The `Platformer.PCG.Tests` EditMode assembly currently contains 40 tests covering:
 
 - deterministic random sequences and chunk selection;
 - ability and minimum-progress filtering;
@@ -155,4 +158,5 @@ The `Platformer.PCG.Tests` EditMode assembly currently contains 39 tests coverin
 - behavior labeling, reward calculation, and episode metadata serialization.
 - normalized ML navigation observations and next-target direction encoding;
 - lab presentation palette, category inference, and debug-panel API;
-- reach safety, rhythm beats, safest-chunk fallback, and deterministic rhythm weights.
+- reach safety, rhythm beats, safest-chunk fallback, and deterministic rhythm weights;
+- no safe fallback across 11 seeds with Player 2's synced reach and no abilities.

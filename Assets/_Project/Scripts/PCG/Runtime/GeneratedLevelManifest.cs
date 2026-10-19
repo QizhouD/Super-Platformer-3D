@@ -11,6 +11,7 @@ namespace Platformer.PCG {
         public Quaternion rotation;
         public float targetDifficulty;
         public float actualDifficulty;
+        public bool safeFallback;
     }
 
     [Serializable]

@@ -151,7 +151,7 @@ docs/                    project documentation
 | `PCGMultimodalDatasetRecorder` | player-behavior dataset |
 | `PCGNavigationAgent` | ML-Agents policy |
 
-EditMode tests live under `Assets/_Project/Tests/PCG/` (39 tests). Play Mode is the primary smoke test.
+EditMode tests live under `Assets/_Project/Tests/PCG/` (40 tests). Play Mode is the primary smoke test.
 
 ---
 

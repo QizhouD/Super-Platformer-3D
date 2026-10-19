@@ -86,21 +86,17 @@ namespace Platformer.PCG {
                     : (PCGRhythmRole?)null;
 
                 for (var attempt = 0; attempt < config.MaximumGenerationAttempts; attempt++) {
-                    var data = selector.Select(
-                        config.Chunks,
+                    var data = SelectChunk(
                         index,
                         targetDifficulty,
                         abilities,
                         random,
                         previousCategory,
                         consecutiveCategoryCount,
-                        config.MaximumConsecutiveCategory,
                         reach,
                         consecutiveFlatCount >= maximumConsecutiveFlatChunks,
                         consecutiveStraightCount >= maximumConsecutiveStraightChunks,
                         currentElevation,
-                        minimumRelativeElevation,
-                        maximumRelativeElevation,
                         role);
 
                     if (data == null) break;
@@ -168,6 +164,43 @@ namespace Platformer.PCG {
             GenerationFinished?.Invoke(LastManifest);
         }
 
+        // The spatial grammar is a preference: ability and reach limits can leave no legal
+        // chunk that changes elevation or direction, so relax it before the safe fallback.
+        PlatformChunkData SelectChunk(
+            int index,
+            float targetDifficulty,
+            PlayerAbilityProfile abilities,
+            DeterministicRandom random,
+            ChunkCategory? previousCategory,
+            int consecutiveCategoryCount,
+            PlayerTraversalCapabilities reach,
+            bool requireElevationChange,
+            bool requireDirectionChange,
+            float currentElevation,
+            PCGRhythmRole? role) {
+            PlatformChunkData Select(bool elevation, bool direction) => selector.Select(
+                config.Chunks,
+                index,
+                targetDifficulty,
+                abilities,
+                random,
+                previousCategory,
+                consecutiveCategoryCount,
+                config.MaximumConsecutiveCategory,
+                reach,
+                elevation,
+                direction,
+                currentElevation,
+                minimumRelativeElevation,
+                maximumRelativeElevation,
+                role);
+
+            var data = Select(requireElevationChange, requireDirectionChange);
+            if (data == null && requireElevationChange) data = Select(false, requireDirectionChange);
+            if (data == null && requireDirectionChange) data = Select(false, false);
+            return data;
+        }
+
         bool TryPlaceSafeFallback(
             int index,
             PlayerAbilityProfile abilities,
@@ -198,7 +231,8 @@ namespace Platformer.PCG {
                 position = candidate.transform.position,
                 rotation = candidate.transform.rotation,
                 targetDifficulty = targetDifficulty,
-                actualDifficulty = data.CompositeDifficulty
+                actualDifficulty = data.CompositeDifficulty,
+                safeFallback = true
             });
             previousCategory = data.Category;
             consecutiveCategoryCount = 1;

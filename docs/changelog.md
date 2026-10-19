@@ -1,5 +1,32 @@
 # Changelog
 
+## [Unreleased] - 2026-10-19
+
+### Fixed
+
+- PCG_LAB levels no longer collapse into safe-fallback `recovery_01` chunks when
+  Double Jump is off. With Player 2's synced reach (vertical 0.42m), no climbing chunk
+  is legal, so once the route hit the -4m floor and the flat limit, every later chunk
+  fell back. The flat/straight limits now relax before the safe fallback. Across seeds
+  1-50 with no abilities, fallback chunks drop from 356/800 to 0/800 and the mean
+  target-vs-actual difficulty error drops from 0.315 to 0.218. The default seed's
+  second half now contains moving, turning, and timed chunks again.
+
+### Added
+
+- `GeneratedChunkRecord.safeFallback` marks safe-fallback chunks in the manifest.
+- EditMode test: Player 2's synced reach with no abilities generates 16 chunks without
+  safe fallback for 11 seeds (40 tests total).
+
+### Known issues
+
+- Generation has no backtracking. With Double Jump on, seeds 21, 24, and 40 spiral
+  into their own path and fail on overlap, both before and after this fix.
+- `PCGPlayerReachModel` does not match the controller. Measured in Play Mode: held
+  jump about 1.22m, tapped jump 1.08m, air time about 0.6s, and hold time barely
+  changes jump height. The model gives 0.42m vertical and 5.02m horizontal reach
+  (assuming 1.02s air time).
+
 ## [Unreleased] - 2026-10-14
 
 ### Fixed

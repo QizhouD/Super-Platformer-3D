@@ -29,7 +29,7 @@ is a GUI-subsystem binary, so `$LASTEXITCODE` says nothing about the run. Read t
 XML for pass/fail counts.
 
 The project's automated tests are the `Platformer.PCG.Tests` EditMode assembly in
-`Assets/_Project/Tests/PCG/Editor/` (39 tests). Keep `-assemblyNames`: the vendored
+`Assets/_Project/Tests/PCG/Editor/` (40 tests). Keep `-assemblyNames`: the vendored
 `NavMeshComponents-master` folder ships 26 more EditMode tests that cannot find their
 scenes in this layout and always fail. There is no CI and no CLI build entry point
 (nothing calls `BuildPipeline.BuildPlayer`), so WebGL builds are made from

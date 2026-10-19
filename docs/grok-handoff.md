@@ -19,6 +19,8 @@
 - `Assets/MyTools/Editor/Setup.cs` 有 UDR0001 警告。
 - 没有 trainer 监听时，ML-Agents 会报 gRPC 连接异常，这是正常现象。
 - 这份 clone 里没有 `.venv-mlagents`，也没有训练结果。训练前先按 `docs/training.md` 建环境。
+- 2026-10-19 发现：PCG 生成没有回溯。开双跳时种子 21、24、40 的路线会绕回自己，重叠后整关生成失败。
+- 2026-10-19 发现：`PCGPlayerReachModel` 与实际跳跃不符。实测按住跳约 1.22m、轻点跳 1.08m、滞空约 0.6s，按住时长几乎不影响跳高；模型给出的垂直可达是 0.42m，水平可达 5.02m（假设滞空 1.02s）。可能与 Player 2 的 Animator 开了 `applyRootMotion` 有关，未验证。
 
 用 MCP for Unity 操作 Editor 时：
 
@@ -131,7 +133,7 @@ Jim 台式机上的 Editor 在 `D:\unity eiditor\Unity 2022.3.2f1\Editor\Unity.e
 | `Assets/_Project/Scripts/PCGNavigationAgent.cs` | ML-Agents Agent、动作和奖励 |
 | `Assets/_Project/Scripts/Input/InputReader.cs` | 人类输入与外部策略输入复用 |
 | `Assets/_Project/Scripts/Editor/PCGProjectBootstrap.cs` | 生成资源和 PCG_Lab 的 Editor 入口 |
-| `Assets/_Project/Tests/PCG/Editor/` | 39 个 PCG EditMode 测试（Core 26、Generation 5、Presentation 8） |
+| `Assets/_Project/Tests/PCG/Editor/` | 40 个 PCG EditMode 测试（Core 27、Generation 5、Presentation 8） |
 
 ## Unity CLI 工作流
 
