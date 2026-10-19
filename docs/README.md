@@ -8,6 +8,8 @@ or sits next to gameplay assets.
 |---|---|
 | [agents.md](agents.md) | Architecture, namespaces, conventions for coding agents |
 | [pcg.md](pcg.md) | PCG Lab generation, reachability, training contract |
+| [pcg-story.md](pcg-story.md) | PCG Lab write-up: design, the fallback-collapse bug, evaluation, limits |
+| [pcg-eval/](pcg-eval/summary.md) | Generated report: seeds 1-100 × 4 ability profiles (do not edit by hand) |
 | [pcg-lab-scene.md](pcg-lab-scene.md) | Current `PCG_Lab` scene dump: hierarchy, scripts, serialized values |
 | [training.md](training.md) | ML-Agents Python trainer setup |
 | [changelog.md](changelog.md) | Feature history |

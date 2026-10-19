@@ -1,0 +1,401 @@
+profile,seed,completed,deterministic,safe_fallbacks,distinct_chunks,heading_changes,difficulty_error,elevation_span_m
+none,1,True,True,0,8,4,0.21,4.00
+none,2,True,True,0,8,3,0.26,4.00
+none,3,True,True,0,8,3,0.21,4.00
+none,4,True,True,0,7,2,0.20,4.00
+none,5,True,True,0,7,6,0.25,4.00
+none,6,True,True,0,7,5,0.24,4.00
+none,7,True,True,0,8,4,0.23,4.00
+none,8,True,True,0,6,4,0.22,4.00
+none,9,True,True,0,9,3,0.22,4.00
+none,10,True,True,0,8,3,0.22,4.00
+none,11,True,True,0,8,6,0.18,4.00
+none,12,True,True,0,8,3,0.22,4.00
+none,13,True,True,0,8,5,0.24,4.00
+none,14,True,True,0,8,1,0.25,4.00
+none,15,True,True,0,9,3,0.20,4.00
+none,16,True,True,0,8,4,0.21,4.00
+none,17,True,True,0,8,5,0.23,4.00
+none,18,True,True,0,8,5,0.22,4.00
+none,19,True,True,0,8,5,0.21,4.00
+none,20,True,True,0,6,2,0.22,4.00
+none,21,True,True,0,8,5,0.21,4.00
+none,22,True,True,0,8,2,0.20,4.00
+none,23,True,True,0,8,2,0.22,4.00
+none,24,True,True,0,6,4,0.26,4.00
+none,25,True,True,0,7,3,0.19,4.00
+none,26,True,True,0,8,6,0.19,4.00
+none,27,True,True,0,6,6,0.22,4.00
+none,28,True,True,0,9,6,0.21,4.00
+none,29,True,True,0,9,2,0.20,4.00
+none,30,True,True,0,9,4,0.19,4.00
+none,31,True,True,0,8,5,0.19,4.00
+none,32,True,True,0,8,3,0.23,4.00
+none,33,True,True,0,8,4,0.22,4.00
+none,34,True,True,0,8,5,0.23,4.00
+none,35,True,True,0,7,6,0.21,4.00
+none,36,True,True,0,7,3,0.22,4.00
+none,37,True,True,0,9,3,0.18,4.00
+none,38,True,True,0,9,3,0.22,4.00
+none,39,True,True,0,8,4,0.22,4.00
+none,40,True,True,0,8,3,0.24,4.00
+none,41,True,True,0,7,4,0.20,4.00
+none,42,True,True,0,7,3,0.22,4.00
+none,43,True,True,0,7,4,0.25,4.00
+none,44,True,True,0,9,3,0.18,4.00
+none,45,True,True,0,9,3,0.21,4.00
+none,46,True,True,0,9,4,0.21,4.00
+none,47,True,True,0,7,4,0.22,4.00
+none,48,True,True,0,9,5,0.23,4.00
+none,49,True,True,0,7,5,0.22,4.00
+none,50,True,True,0,8,4,0.23,4.00
+none,51,True,True,0,8,4,0.19,4.00
+none,52,True,True,0,9,1,0.20,4.00
+none,53,True,True,0,7,6,0.26,4.00
+none,54,True,True,0,9,4,0.25,4.00
+none,55,True,True,0,8,3,0.20,4.00
+none,56,True,True,0,6,4,0.25,4.00
+none,57,True,True,0,7,5,0.24,4.00
+none,58,True,True,0,7,6,0.17,4.00
+none,59,True,True,0,9,2,0.25,4.00
+none,60,True,True,0,9,5,0.21,4.00
+none,61,True,True,0,6,3,0.20,4.00
+none,62,True,True,0,8,4,0.24,4.00
+none,63,True,True,0,8,4,0.22,4.00
+none,64,True,True,0,8,4,0.25,4.00
+none,65,True,True,0,9,4,0.23,4.00
+none,66,True,True,0,9,4,0.18,4.00
+none,67,True,True,0,8,3,0.23,4.00
+none,68,True,True,0,8,5,0.18,4.00
+none,69,True,True,0,8,4,0.23,4.00
+none,70,True,True,0,8,5,0.25,4.00
+none,71,True,True,0,7,5,0.26,4.00
+none,72,True,True,0,7,3,0.23,4.00
+none,73,True,True,0,7,4,0.22,4.00
+none,74,True,True,0,9,3,0.20,4.00
+none,75,True,True,0,6,3,0.22,4.00
+none,76,True,True,0,7,5,0.20,4.00
+none,77,False,True,0,6,4,0.25,4.00
+none,78,True,True,0,9,5,0.25,4.00
+none,79,True,True,0,8,3,0.21,4.00
+none,80,True,True,0,7,2,0.17,4.00
+none,81,True,True,0,8,2,0.21,4.00
+none,82,True,True,0,9,2,0.21,4.00
+none,83,True,True,0,8,5,0.26,4.00
+none,84,True,True,0,8,5,0.23,4.00
+none,85,True,True,0,7,3,0.24,4.00
+none,86,True,True,0,8,4,0.25,4.00
+none,87,True,True,0,8,4,0.18,4.00
+none,88,True,True,0,8,6,0.21,4.00
+none,89,True,True,0,8,3,0.24,4.00
+none,90,True,True,0,8,2,0.23,4.00
+none,91,True,True,0,8,6,0.19,4.00
+none,92,True,True,0,9,3,0.25,4.00
+none,93,True,True,0,9,4,0.21,4.00
+none,94,True,True,0,7,4,0.23,4.00
+none,95,True,True,0,8,4,0.20,4.00
+none,96,True,True,0,8,4,0.24,4.00
+none,97,True,True,0,5,3,0.26,4.00
+none,98,True,True,0,9,4,0.21,4.00
+none,99,True,True,0,8,4,0.21,4.00
+none,100,True,True,0,7,4,0.24,4.00
+double jump,1,True,True,0,9,3,0.18,6.40
+double jump,2,True,True,0,9,5,0.20,9.20
+double jump,3,True,True,0,8,5,0.22,7.60
+double jump,4,True,True,0,9,3,0.21,8.00
+double jump,5,True,True,0,9,7,0.22,4.00
+double jump,6,True,True,0,8,6,0.23,8.00
+double jump,7,True,True,0,8,5,0.18,6.00
+double jump,8,True,True,0,10,4,0.22,7.20
+double jump,9,True,True,0,10,4,0.22,4.00
+double jump,10,True,True,0,10,4,0.24,2.80
+double jump,11,True,True,0,8,5,0.16,4.00
+double jump,12,True,True,0,9,4,0.20,7.20
+double jump,13,True,True,0,10,5,0.21,9.20
+double jump,14,True,True,0,10,3,0.21,5.60
+double jump,15,True,True,0,10,2,0.19,5.60
+double jump,16,True,True,0,9,3,0.21,3.60
+double jump,17,True,True,0,10,4,0.23,7.20
+double jump,18,True,True,0,9,5,0.20,4.00
+double jump,19,True,True,0,9,4,0.21,4.00
+double jump,20,True,True,0,8,3,0.21,8.80
+double jump,21,False,True,0,9,5,0.19,7.20
+double jump,22,True,True,0,11,4,0.17,7.20
+double jump,23,True,True,0,8,4,0.20,8.40
+double jump,24,False,True,0,9,4,0.24,7.20
+double jump,25,True,True,0,8,4,0.21,9.20
+double jump,26,True,True,0,9,4,0.20,6.40
+double jump,27,True,True,0,10,5,0.23,7.20
+double jump,28,True,True,0,9,4,0.19,6.00
+double jump,29,True,True,0,8,4,0.21,7.20
+double jump,30,True,True,0,9,3,0.19,4.00
+double jump,31,True,True,0,9,6,0.21,6.40
+double jump,32,True,True,0,9,5,0.20,8.00
+double jump,33,True,True,0,9,3,0.21,4.00
+double jump,34,True,True,0,9,3,0.18,5.60
+double jump,35,True,True,0,9,5,0.20,6.40
+double jump,36,True,True,0,9,2,0.21,3.60
+double jump,37,True,True,0,10,3,0.16,7.20
+double jump,38,True,True,0,11,5,0.23,7.20
+double jump,39,True,True,0,8,5,0.19,8.00
+double jump,40,False,True,0,7,3,0.14,5.20
+double jump,41,True,True,0,10,5,0.17,5.20
+double jump,42,True,True,0,9,6,0.21,4.00
+double jump,43,True,True,0,8,5,0.27,7.60
+double jump,44,True,True,0,8,3,0.16,6.00
+double jump,45,True,True,0,9,3,0.18,7.60
+double jump,46,True,True,0,9,6,0.19,7.20
+double jump,47,True,True,0,10,4,0.22,7.60
+double jump,48,True,True,0,11,6,0.24,7.20
+double jump,49,True,True,0,8,2,0.21,4.00
+double jump,50,True,True,0,11,5,0.21,5.20
+double jump,51,True,True,0,9,7,0.17,8.00
+double jump,52,True,True,0,8,2,0.18,8.00
+double jump,53,True,True,0,9,7,0.21,7.20
+double jump,54,True,True,0,10,4,0.22,7.20
+double jump,55,True,True,0,10,3,0.22,6.40
+double jump,56,True,True,0,10,5,0.22,7.20
+double jump,57,True,True,0,9,3,0.24,7.20
+double jump,58,True,True,0,8,3,0.19,7.60
+double jump,59,True,True,0,11,4,0.21,4.00
+double jump,60,True,True,0,8,2,0.20,6.40
+double jump,61,True,True,0,7,4,0.17,7.20
+double jump,62,True,True,0,9,6,0.16,8.00
+double jump,63,True,True,0,10,3,0.22,8.00
+double jump,64,True,True,0,9,4,0.19,8.00
+double jump,65,True,True,0,9,5,0.22,6.40
+double jump,66,True,True,0,8,4,0.20,4.00
+double jump,67,True,True,0,10,5,0.23,8.00
+double jump,68,True,True,0,8,2,0.18,6.40
+double jump,69,True,True,0,10,4,0.21,8.40
+double jump,70,True,True,0,10,4,0.20,4.00
+double jump,71,True,True,0,10,5,0.21,5.20
+double jump,72,True,True,0,10,5,0.17,8.40
+double jump,73,True,True,0,11,4,0.22,6.40
+double jump,74,True,True,1,10,4,0.22,2.00
+double jump,75,True,True,0,11,5,0.19,7.20
+double jump,76,True,True,0,9,6,0.20,5.20
+double jump,77,True,True,0,10,5,0.21,7.20
+double jump,78,True,True,0,8,6,0.20,3.20
+double jump,79,True,True,0,9,2,0.19,7.20
+double jump,80,True,True,0,9,4,0.21,5.20
+double jump,81,True,True,0,10,3,0.20,4.00
+double jump,82,True,True,0,10,4,0.22,7.20
+double jump,83,True,True,0,10,5,0.19,5.20
+double jump,84,True,True,0,10,5,0.23,7.20
+double jump,85,True,True,0,9,4,0.25,5.20
+double jump,86,True,True,0,11,5,0.24,6.40
+double jump,87,True,True,0,10,2,0.20,7.20
+double jump,88,True,True,0,10,3,0.22,7.60
+double jump,89,True,True,0,10,4,0.22,8.00
+double jump,90,True,True,0,9,5,0.22,8.40
+double jump,91,True,True,0,9,6,0.20,6.40
+double jump,92,True,True,0,11,3,0.21,7.60
+double jump,93,True,True,0,8,4,0.17,6.40
+double jump,94,True,True,0,11,5,0.24,8.00
+double jump,95,True,True,0,10,4,0.20,4.00
+double jump,96,True,True,0,9,4,0.25,6.40
+double jump,97,True,True,0,9,3,0.22,6.00
+double jump,98,True,True,0,11,5,0.22,4.00
+double jump,99,True,True,0,9,5,0.19,3.20
+double jump,100,True,True,0,9,5,0.21,6.00
+dash,1,True,True,0,8,4,0.18,4.00
+dash,2,True,True,0,8,3,0.26,4.00
+dash,3,True,True,0,9,4,0.23,4.00
+dash,4,True,True,0,7,2,0.19,4.00
+dash,5,True,True,0,8,6,0.23,4.00
+dash,6,True,True,0,7,5,0.25,4.00
+dash,7,True,True,0,9,4,0.23,4.00
+dash,8,True,True,0,8,5,0.19,4.00
+dash,9,True,True,0,9,4,0.21,4.00
+dash,10,True,True,0,9,3,0.21,4.00
+dash,11,True,True,0,8,3,0.17,4.00
+dash,12,True,True,0,8,3,0.22,4.00
+dash,13,True,True,0,9,5,0.24,4.00
+dash,14,True,True,0,8,2,0.26,4.00
+dash,15,True,True,0,8,3,0.16,4.00
+dash,16,True,True,0,8,4,0.19,4.00
+dash,17,True,True,0,8,4,0.22,4.00
+dash,18,True,True,0,8,5,0.21,4.00
+dash,19,True,True,0,9,4,0.20,4.00
+dash,20,True,True,0,8,3,0.20,4.00
+dash,21,True,True,0,7,4,0.20,4.00
+dash,22,True,True,0,9,2,0.20,4.00
+dash,23,True,True,0,10,3,0.21,4.00
+dash,24,True,True,0,6,4,0.25,4.00
+dash,25,True,True,0,7,3,0.19,4.00
+dash,26,True,True,0,8,5,0.17,4.00
+dash,27,True,True,0,7,6,0.20,4.00
+dash,28,True,True,0,10,6,0.18,4.00
+dash,29,True,True,0,8,1,0.19,4.00
+dash,30,True,True,0,9,4,0.15,4.00
+dash,31,True,True,0,9,4,0.17,4.00
+dash,32,True,True,0,8,4,0.22,4.00
+dash,33,True,True,0,8,3,0.21,4.00
+dash,34,True,True,0,7,5,0.19,4.00
+dash,35,True,True,0,7,6,0.22,4.00
+dash,36,True,True,0,7,3,0.20,4.00
+dash,37,True,True,0,10,2,0.15,4.00
+dash,38,True,True,0,9,2,0.23,4.00
+dash,39,True,True,0,9,4,0.22,4.00
+dash,40,True,True,0,7,2,0.23,4.00
+dash,41,True,True,0,8,3,0.18,4.00
+dash,42,True,True,0,8,3,0.19,4.00
+dash,43,True,True,0,7,3,0.25,4.00
+dash,44,True,True,0,10,3,0.17,4.00
+dash,45,True,True,0,10,2,0.20,4.00
+dash,46,True,True,0,9,5,0.20,4.00
+dash,47,True,True,0,8,3,0.20,4.00
+dash,48,False,True,0,9,5,0.21,4.00
+dash,49,True,True,0,7,4,0.19,4.00
+dash,50,True,True,0,9,3,0.22,4.00
+dash,51,True,True,0,8,4,0.17,4.00
+dash,52,True,True,0,9,1,0.22,4.00
+dash,53,True,True,0,7,6,0.26,4.00
+dash,54,True,True,0,7,3,0.25,4.00
+dash,55,True,True,0,8,3,0.19,4.00
+dash,56,True,True,0,6,5,0.24,4.00
+dash,57,True,True,0,9,5,0.25,4.00
+dash,58,True,True,0,7,6,0.14,4.00
+dash,59,True,True,0,8,2,0.23,4.00
+dash,60,True,True,0,8,5,0.21,4.00
+dash,61,True,True,0,7,3,0.21,4.00
+dash,62,True,True,0,8,5,0.22,4.00
+dash,63,True,True,0,7,4,0.23,4.00
+dash,64,True,True,0,8,4,0.24,4.00
+dash,65,True,True,0,8,3,0.20,4.00
+dash,66,True,True,0,9,4,0.14,4.00
+dash,67,True,True,0,8,3,0.21,4.00
+dash,68,True,True,0,9,4,0.17,4.00
+dash,69,True,True,0,9,4,0.21,4.00
+dash,70,True,True,0,10,5,0.23,4.00
+dash,71,True,True,0,7,4,0.25,4.00
+dash,72,True,True,0,9,3,0.17,4.00
+dash,73,True,True,0,8,4,0.20,4.00
+dash,74,True,True,0,9,3,0.23,4.00
+dash,75,True,True,0,6,3,0.22,4.00
+dash,76,True,True,0,7,5,0.17,4.00
+dash,77,False,True,0,6,4,0.25,4.00
+dash,78,True,True,0,8,6,0.27,4.00
+dash,79,True,True,0,7,1,0.20,4.00
+dash,80,True,True,0,8,2,0.14,4.00
+dash,81,True,True,0,9,2,0.19,4.00
+dash,82,True,True,0,9,2,0.20,4.00
+dash,83,True,True,0,8,5,0.25,4.00
+dash,84,True,True,0,8,5,0.22,4.00
+dash,85,True,True,0,7,3,0.24,4.00
+dash,86,True,True,0,10,4,0.25,4.00
+dash,87,True,True,0,9,3,0.15,4.00
+dash,88,True,True,0,7,6,0.20,4.00
+dash,89,True,True,0,9,4,0.25,4.00
+dash,90,True,True,0,8,3,0.23,4.00
+dash,91,True,True,0,8,6,0.17,4.00
+dash,92,True,True,0,8,3,0.20,4.00
+dash,93,True,True,0,8,4,0.21,4.00
+dash,94,True,True,0,9,4,0.22,4.00
+dash,95,True,True,0,9,4,0.18,4.00
+dash,96,True,True,0,8,5,0.22,4.00
+dash,97,True,True,0,8,2,0.23,4.00
+dash,98,True,True,0,8,4,0.19,4.00
+dash,99,True,True,0,9,3,0.19,4.00
+dash,100,True,True,0,7,4,0.24,4.00
+double jump + dash,1,True,True,0,9,3,0.15,6.40
+double jump + dash,2,True,True,0,8,4,0.18,6.00
+double jump + dash,3,True,True,0,8,6,0.21,6.40
+double jump + dash,4,True,True,0,10,3,0.21,8.00
+double jump + dash,5,True,True,0,9,7,0.21,4.00
+double jump + dash,6,True,True,0,9,6,0.23,8.00
+double jump + dash,7,True,True,0,8,5,0.19,4.00
+double jump + dash,8,True,True,0,8,6,0.19,8.00
+double jump + dash,9,True,True,0,10,3,0.23,4.00
+double jump + dash,10,True,True,0,11,4,0.23,5.20
+double jump + dash,11,True,True,0,9,4,0.16,4.00
+double jump + dash,12,True,True,0,11,2,0.18,7.20
+double jump + dash,13,True,True,0,11,3,0.21,6.40
+double jump + dash,14,True,True,0,8,3,0.21,3.20
+double jump + dash,15,True,True,0,12,1,0.18,3.60
+double jump + dash,16,True,True,0,8,3,0.21,3.60
+double jump + dash,17,True,True,0,10,4,0.23,7.20
+double jump + dash,18,True,True,0,9,6,0.16,6.40
+double jump + dash,19,True,True,0,9,4,0.19,5.20
+double jump + dash,20,True,True,0,9,4,0.23,8.40
+double jump + dash,21,True,True,0,10,5,0.22,7.20
+double jump + dash,22,True,True,0,10,4,0.15,8.00
+double jump + dash,23,True,True,0,9,4,0.19,5.20
+double jump + dash,24,True,True,0,9,5,0.27,7.20
+double jump + dash,25,True,True,0,8,3,0.21,9.20
+double jump + dash,26,True,True,0,8,3,0.16,7.60
+double jump + dash,27,True,True,0,10,5,0.23,7.20
+double jump + dash,28,True,True,0,9,4,0.20,3.20
+double jump + dash,29,True,True,0,10,4,0.20,7.20
+double jump + dash,30,True,True,0,10,3,0.15,4.00
+double jump + dash,31,True,True,0,8,6,0.21,6.40
+double jump + dash,32,True,True,0,9,5,0.20,8.00
+double jump + dash,33,True,True,0,9,3,0.21,4.00
+double jump + dash,34,True,True,0,10,3,0.19,6.40
+double jump + dash,35,True,True,0,9,5,0.20,6.40
+double jump + dash,36,True,True,0,9,4,0.22,6.00
+double jump + dash,37,True,True,0,10,3,0.16,7.20
+double jump + dash,38,True,True,0,12,3,0.21,7.20
+double jump + dash,39,True,True,0,7,5,0.20,4.00
+double jump + dash,40,False,True,0,8,3,0.14,5.20
+double jump + dash,41,True,True,0,9,4,0.18,4.40
+double jump + dash,42,True,True,0,9,6,0.20,4.00
+double jump + dash,43,True,True,0,8,5,0.26,7.60
+double jump + dash,44,True,True,0,8,2,0.15,6.00
+double jump + dash,45,True,True,0,10,3,0.20,7.60
+double jump + dash,46,True,True,0,9,6,0.19,5.20
+double jump + dash,47,True,True,0,9,4,0.22,7.60
+double jump + dash,48,True,True,0,11,6,0.21,7.20
+double jump + dash,49,True,True,0,7,2,0.21,6.40
+double jump + dash,50,True,True,0,11,5,0.20,5.20
+double jump + dash,51,True,True,0,10,4,0.18,4.00
+double jump + dash,52,True,True,0,9,2,0.17,8.00
+double jump + dash,53,True,True,0,10,8,0.22,7.20
+double jump + dash,54,True,True,0,10,4,0.23,7.20
+double jump + dash,55,True,True,0,10,3,0.21,4.40
+double jump + dash,56,True,True,0,9,6,0.20,7.60
+double jump + dash,57,True,True,0,11,4,0.23,6.00
+double jump + dash,58,True,True,0,9,1,0.17,6.40
+double jump + dash,59,True,True,0,12,3,0.19,4.00
+double jump + dash,60,True,True,0,11,3,0.20,7.20
+double jump + dash,61,True,True,0,10,4,0.17,7.20
+double jump + dash,62,True,True,0,11,5,0.16,6.00
+double jump + dash,63,True,True,0,9,3,0.22,8.00
+double jump + dash,64,True,True,0,10,3,0.21,8.00
+double jump + dash,65,True,True,0,9,5,0.20,6.40
+double jump + dash,66,True,True,0,9,4,0.19,4.00
+double jump + dash,67,True,True,0,10,6,0.24,10.00
+double jump + dash,68,True,True,0,10,4,0.18,6.40
+double jump + dash,69,True,True,0,10,4,0.20,8.40
+double jump + dash,70,True,True,0,11,4,0.19,4.00
+double jump + dash,71,True,True,0,9,4,0.21,6.00
+double jump + dash,72,True,True,0,10,5,0.18,6.40
+double jump + dash,73,True,True,0,11,3,0.21,6.40
+double jump + dash,74,True,True,0,9,5,0.18,4.00
+double jump + dash,75,True,True,0,11,5,0.19,7.20
+double jump + dash,76,True,True,0,8,7,0.19,7.20
+double jump + dash,77,True,True,0,10,5,0.22,7.20
+double jump + dash,78,True,True,0,7,5,0.23,4.00
+double jump + dash,79,True,True,0,10,3,0.24,7.20
+double jump + dash,80,True,True,0,9,4,0.19,7.20
+double jump + dash,81,True,True,0,10,3,0.21,4.00
+double jump + dash,82,True,True,0,11,4,0.18,7.20
+double jump + dash,83,True,True,0,11,4,0.18,5.20
+double jump + dash,84,True,True,0,9,4,0.22,7.20
+double jump + dash,85,True,True,0,9,4,0.26,5.20
+double jump + dash,86,True,True,0,11,4,0.22,4.40
+double jump + dash,87,True,True,0,10,3,0.20,4.00
+double jump + dash,88,True,True,0,11,2,0.17,5.60
+double jump + dash,89,True,True,0,11,4,0.23,8.00
+double jump + dash,90,True,True,0,10,4,0.22,8.40
+double jump + dash,91,True,True,0,8,5,0.20,6.40
+double jump + dash,92,True,True,0,11,3,0.21,7.60
+double jump + dash,93,True,True,0,7,4,0.17,6.40
+double jump + dash,94,True,True,0,10,5,0.22,8.00
+double jump + dash,95,True,True,0,10,5,0.20,5.20
+double jump + dash,96,True,True,0,8,2,0.23,6.40
+double jump + dash,97,True,True,0,9,3,0.22,7.20
+double jump + dash,98,True,True,0,11,5,0.20,7.20
+double jump + dash,99,True,True,0,10,5,0.18,3.20
+double jump + dash,100,True,True,0,7,5,0.21,8.00

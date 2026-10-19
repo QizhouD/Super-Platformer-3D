@@ -44,7 +44,8 @@ Play
 
 Controls: WASD move, Space jump, Shift dash, hold RMB to look. The top-left HUD changes seed, toggles Double Jump / Dash, switches training mode, and records datasets. Double Jump and Dash start off; a toggle applies to the player at once and to the route on the next GENERATE.
 
-Full rules: [docs/pcg.md](docs/pcg.md).
+Full rules: [docs/pcg.md](docs/pcg.md). Design, a measured failure and its fix, and a
+400-level evaluation: [docs/pcg-story.md](docs/pcg-story.md).
 
 ---
 

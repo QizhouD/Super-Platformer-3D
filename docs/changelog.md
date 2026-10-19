@@ -14,12 +14,17 @@
 
 ### Added
 
+- `Platformer > PCG > Write Generation Report` (batch: `PCGGenerationReport.WriteBatchMode`)
+  generates seeds 1-100 for four ability profiles and writes `docs/pcg-eval/`.
+- `docs/pcg-story.md`: portfolio write-up of the generator, this fix, and the evaluation.
 - `GeneratedChunkRecord.safeFallback` marks safe-fallback chunks in the manifest.
 - EditMode test: Player 2's synced reach with no abilities generates 16 chunks without
   safe fallback for 11 seeds (40 tests total).
 
 ### Known issues
 
+- Without abilities, the hardest legal chunk is `timed_01` (0.43), so levels cannot
+  follow the difficulty curve past about 0.45. The library needs harder no-ability chunks.
 - Generation has no backtracking. With Double Jump on, seeds 21, 24, and 40 spiral
   into their own path and fail on overlap, both before and after this fix.
 - `PCGPlayerReachModel` does not match the controller. Measured in Play Mode: held
